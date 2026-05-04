@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIWA タイプ診断 | あなたの強みを見つける無料診断</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D0D14;
+  --surface: #141420;
+  --surface2: #1C1C2E;
+  --border: #2A2A3E;
+  --text: #F0EEFF;
+  --text2: #9B96C0;
+  --text3: #5A5580;
+  --accent: #C084FC;
+  --accent2: #F472B6;
+  --accent3: #38BDF8;
+  --accent4: #34D399;
+  --glow: rgba(192,132,252,0.15);
+  --glow2: rgba(244,114,182,0.1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 背景エフェクト */
+.bg-orbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: float 8s infinite ease-in-out;
+}
+
+.orb1 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #C084FC, transparent);
+  top: -100px; left: -100px;
+  animation-delay: 0s;
+}
+
+.orb2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #F472B6, transparent);
+  bottom: -80px; right: -80px;
+  animation-delay: 3s;
+}
+
+.orb3 {
+  width: 250px; height: 250px;
+  background: radial-gradient(circle, #38BDF8, transparent);
+  top: 50%; left: 60%;
+  animation-delay: 5s;
+  opacity: 0.2;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -20px) scale(1.05); }
+  66% { transform: translate(-15px, 15px) scale(0.95); }
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 6rem;
+}
+
+/* ヘッダー */
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeUp 1s ease both;
+}
+
+.logo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(192,132,252,0.15), rgba(244,114,182,0.1));
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 100px;
+  padding: 6px 18px;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.logo-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s infinite;
+}
+
+h1 {
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #F0EEFF 0%, #C084FC 50%, #F472B6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.8;
+  max-width: 480px;
+  margin: 0 auto 1.5rem;
+}
+
+.free-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(56,189,248,0.1));
+  border: 1px solid rgba(52,211,153,0.3);
+  border-radius: 100px;
+  padding: 4px 14px;
+  font-size: 12px;
+  color: var(--accent4);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+/* プログレスバー */
+.progress-wrap {
+  margin-bottom: 2rem;
+  animation: fadeUp 1s 0.1s ease both;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 100px;
+  transition: width 0.5s ease;
+}
+
+/* 質問カード */
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 1rem;
+  animation: fadeUp 0.6s ease both;
+  position: relative;
+  overflow: hidden;
+}
+
+.question-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.5;
+}
+
+.q-num {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.q-text {
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+}
+
+/* 選択肢 */
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.choice {
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface2);
+  color: var(--text2);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  font-family: 'Noto Sans JP', sans-serif;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.choice-letter {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  color: var(--text3);
+}
+
+.choice:hover {
+  border-color: var(--accent);
+  background: rgba(192,132,252,0.08);
+  color: var(--text);
+  transform: translateX(4px);
+}
+
+.choice:hover .choice-letter {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.choice.selected {
+  border-color: var(--accent);
+  background: rgba(192,132,252,0.12);
+  color: var(--text);
+}
+
+.choice.selected .choice-letter {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+/* ナビゲーション */
+.nav-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.btn-next {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.05em;
+}
+
+.btn-next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(192,132,252,0.3);
+}
+
+.btn-next:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-back {
+  padding: 14px 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text2);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* ローディング */
+.loading-screen {
+  text-align: center;
+  padding: 3rem;
+  display: none;
+  animation: fadeUp 0.6s ease both;
+}
+
+.loading-orb-wrap {
+  position: relative;
+  width: 80px; height: 80px;
+  margin: 0 auto 1.5rem;
+}
+
+.loading-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.loading-ring:nth-child(1) {
+  border-top-color: var(--accent);
+  animation: spin 1.2s linear infinite;
+}
+
+.loading-ring:nth-child(2) {
+  inset: 8px;
+  border-top-color: var(--accent2);
+  animation: spin 0.8s linear infinite reverse;
+}
+
+.loading-ring:nth-child(3) {
+  inset: 16px;
+  border-top-color: var(--accent3);
+  animation: spin 1.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-size: 13px;
+  color: var(--text2);
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* 結果画面 */
+.result-screen {
+  display: none;
+  animation: fadeUp 0.8s ease both;
+}
+
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+}
+
+.result-emoji {
+  font-size: 52px;
+  margin-bottom: 1rem;
+  display: block;
+  animation: bounceIn 0.8s ease both;
+}
+
+.result-type-label {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.result-type-name {
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #F0EEFF, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.25rem;
+  line-height: 1.3;
+}
+
+.result-desc {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.9;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.strength-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.strength-tag {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid rgba(192,132,252,0.4);
+  color: var(--accent);
+  background: rgba(192,132,252,0.08);
+}
+
+.fukugyo-section {
+  background: var(--surface2);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.fukugyo-title {
+  font-size: 11px;
+  color: var(--accent3);
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.fukugyo-list {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 2;
+}
+
+.message-section {
+  background: linear-gradient(135deg, rgba(192,132,252,0.08), rgba(244,114,182,0.05));
+  border: 1px solid rgba(192,132,252,0.2);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.message-title {
+  font-size: 11px;
+  color: var(--accent2);
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.message-text {
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.9;
+}
+
+/* 誘導ボタン */
+.cta-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.btn-cta-primary {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+}
+
+.btn-cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(192,132,252,0.3);
+}
+
+.btn-cta-secondary {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgba(52,211,153,0.4);
+  border-radius: 14px;
+  background: rgba(52,211,153,0.08);
+  color: var(--accent4);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+}
+
+.btn-cta-secondary:hover {
+  background: rgba(52,211,153,0.15);
+  transform: translateY(-1px);
+}
+
+.btn-retry {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text3);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-retry:hover { color: var(--text2); border-color: var(--text3); }
+
+/* 注意書き */
+.notice {
+  background: rgba(56,189,248,0.06);
+  border: 1px solid rgba(56,189,248,0.2);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  font-size: 12px;
+  color: var(--accent3);
+  line-height: 1.7;
+  margin-top: 1rem;
+}
+
+.notice strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+/* フッター */
+.footer {
+  text-align: center;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text3);
+  line-height: 1.9;
+}
+
+/* アニメーション */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.5;transform:scale(0.8)}
+}
+
+@keyframes bounceIn {
+  0%{opacity:0;transform:scale(0.3)}
+  50%{transform:scale(1.1)}
+  100%{opacity:1;transform:scale(1)}
+}
+
+@media(max-width:480px){
+  .question-card{padding:1.5rem}
+  .result-card{padding:1.75rem}
+  .nav-row{flex-direction:column}
+  .btn-back{order:-1}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- ヘッダー -->
+  <div class="header" id="header">
+    <div class="logo-badge">
+      <div class="logo-dot"></div>
+      AIWA — AIと人をつなぐ輪
+    </div>
+    <h1>あなたは<br>どのタイプ？</h1>
+    <p class="subtitle">10問に答えるだけで、あなたの強み・思考タイプ・向いている複業がわかります。</p>
+    <div class="free-badge">✦ 完全無料</div>
+  </div>
+
+  <!-- プログレスバー -->
+  <div class="progress-wrap" id="progressWrap" style="display:none">
+    <div class="progress-info">
+      <span id="progressLabel">質問 1 / 10</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- スタートボタン -->
+  <div id="startSection" style="text-align:center;padding:1rem 0">
+    <button class="btn-next" onclick="startQuiz()" style="max-width:320px;margin:0 auto;display:block">
+      診断をはじめる →
+    </button>
+    <p style="font-size:12px;color:var(--text3);margin-top:1rem">所要時間：約3分</p>
+  </div>
+
+  <!-- 質問エリア -->
+  <div id="questionArea" style="display:none"></div>
+
+  <!-- ローディング -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-orb-wrap">
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+    </div>
+    <div class="loading-text" id="loadingText">あなたの答えを分析しています...</div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div class="result-screen" id="resultScreen"></div>
+
+  <!-- フッター -->
+  <div class="footer">
+    <strong style="color:var(--text2)">AIWA タイプ診断</strong><br>
+    本ツールは Claude（Anthropic社）と連携して動作します<br><br>
+    © 2026 AIWA — AI Multi-Work Alliance｜代表<br>
+    note: <strong style="color:var(--text2)">AI</strong>（えーあい／あい）｜X: <strong style="color:var(--text2)">@Ai83wa</strong><br><br>
+    本ツールの無断転載・再配布を禁止します。
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text: "仕事や日常で、あなたが一番自然にやってしまうことは？",
+    choices: [
+      { text: "困っている人を見ると、つい声をかけてしまう", types: ["共感サポート型", "教育伝達型"] },
+      { text: "データや数字を見ると、パターンを探したくなる", types: ["分析ロジック型"] },
+      { text: "「こうしたらもっと良くなるのに」とアイデアが湧く", types: ["クリエイティブ発想型"] },
+      { text: "やることリストを作って、一つずつ片付けたくなる", types: ["実務遂行型"] }
+    ]
+  },
+  {
+    text: "グループで何かを決める時、あなたはどんな役割になることが多い？",
+    choices: [
+      { text: "みんなの意見を聞いてまとめる役", types: ["共感サポート型", "リーダーコーディネート型"] },
+      { text: "データや根拠を調べて提示する役", types: ["分析ロジック型"] },
+      { text: "新しいアイデアや提案を出す役", types: ["クリエイティブ発想型"] },
+      { text: "決まったことを着実に実行する役", types: ["実務遂行型"] }
+    ]
+  },
+  {
+    text: "誰かに何かを教える時、あなたはどんな方法を選ぶ？",
+    choices: [
+      { text: "相手のペースに合わせてゆっくり丁寧に", types: ["共感サポート型", "教育伝達型"] },
+      { text: "理由や仕組みから順番に論理的に", types: ["分析ロジック型", "教育伝達型"] },
+      { text: "例え話や図を使って分かりやすく", types: ["クリエイティブ発想型", "教育伝達型"] },
+      { text: "マニュアルや手順書を作って渡す", types: ["実務遂行型"] }
+    ]
+  },
+  {
+    text: "あなたが一番「やりがい」を感じる瞬間は？",
+    choices: [
+      { text: "誰かが笑顔になったり、感謝されたりした時", types: ["共感サポート型", "教育伝達型"] },
+      { text: "複雑な問題を分析して解決できた時", types: ["分析ロジック型"] },
+      { text: "自分のアイデアが形になった時", types: ["クリエイティブ発想型"] },
+      { text: "計画通りにやり遂げた時", types: ["実務遂行型", "リーダーコーディネート型"] }
+    ]
+  },
+  {
+    text: "友人から「あなたってこういう人だよね」と言われそうなことは？",
+    choices: [
+      { text: "話を聞いてくれる・親身になってくれる", types: ["共感サポート型"] },
+      { text: "頭が良い・論理的・分析が得意", types: ["分析ロジック型"] },
+      { text: "発想が豊か・面白いことを考える", types: ["クリエイティブ発想型"] },
+      { text: "しっかりしてる・頼りになる・約束を守る", types: ["実務遂行型", "リーダーコーディネート型"] }
+    ]
+  },
+  {
+    text: "苦手なことや避けたいことに近いのは？",
+    choices: [
+      { text: "人の気持ちを考えずに進めること", types: ["共感サポート型", "教育伝達型"] },
+      { text: "根拠のない感覚だけで決めること", types: ["分析ロジック型"] },
+      { text: "毎日同じことの繰り返し", types: ["クリエイティブ発想型"] },
+      { text: "計画なく行き当たりばったりに動くこと", types: ["実務遂行型", "リーダーコーディネート型"] }
+    ]
+  },
+  {
+    text: "自由な時間ができたら、何をしていることが多い？",
+    choices: [
+      { text: "誰かと話す・連絡を取る・人と関わる", types: ["共感サポート型", "リーダーコーディネート型"] },
+      { text: "本を読む・調べる・学ぶ", types: ["分析ロジック型", "教育伝達型"] },
+      { text: "何か作る・描く・表現する", types: ["クリエイティブ発想型"] },
+      { text: "整理整頓・片付け・計画を立てる", types: ["実務遂行型"] }
+    ]
+  },
+  {
+    text: "新しいことを始める時、あなたはどちらに近い？",
+    choices: [
+      { text: "周りの人の意見を聞いてから慎重に始める", types: ["共感サポート型", "実務遂行型"] },
+      { text: "情報を集めて分析してから判断する", types: ["分析ロジック型"] },
+      { text: "まずやってみてから考える・直感を信じる", types: ["クリエイティブ発想型"] },
+      { text: "計画を立ててから一歩一歩進める", types: ["実務遂行型", "リーダーコーディネート型"] }
+    ]
+  },
+  {
+    text: "仕事や活動で「もっとこうなればいいのに」と思うことは？",
+    choices: [
+      { text: "もっと人の気持ちに寄り添う仕事がしたい", types: ["共感サポート型", "教育伝達型"] },
+      { text: "もっとデータや根拠を使って判断したい", types: ["分析ロジック型"] },
+      { text: "もっと自分のアイデアを活かしたい", types: ["クリエイティブ発想型"] },
+      { text: "もっとチームや組織をうまくまとめたい", types: ["リーダーコーディネート型"] }
+    ]
+  },
+  {
+    text: "複業や副業を考えた時、一番やってみたいと思うのは？",
+    choices: [
+      { text: "誰かの悩みを聞いてサポートする仕事", types: ["共感サポート型"] },
+      { text: "データ分析・リサーチ・調査系の仕事", types: ["分析ロジック型"] },
+      { text: "文章を書く・デザインする・コンテンツを作る", types: ["クリエイティブ発想型"] },
+      { text: "事務代行・管理・教えること", types: ["実務遂行型", "教育伝達型"] }
+    ]
+  }
+];
+
+const typeData = {
+  "共感サポート型": {
+    emoji: "🌸",
+    desc: "人の気持ちを読み取り、寄り添う力が突出しています。「この人、今どんな気持ちだろう？」と自然に考えられるあなたは、誰かを支える仕事で本領を発揮します。看護師・保育士・カウンセラーの経験がある方にも多いタイプです。",
+    strengths: ["傾聴力", "共感力", "サポート力", "観察力", "気配り"],
+    fukugyo: "カウンセリングサポート・SNS運用代行・オンライン秘書・ライフコーチ・育児・介護系サービス",
+    message: "「大丈夫？」と声をかけられる人は、世界を少しずつ温かくしています。あなたの寄り添う力は、れっきとしたスキルです。その優しさを、もっと広い場所で発揮してみませんか。"
+  },
+  "分析ロジック型": {
+    emoji: "🔍",
+    desc: "データや情報を整理して、本質を見抜く力があります。感情に流されず、根拠をもとに判断できるあなたは、複雑な問題を解決する場面で輝きます。数字や仕組みを読み解くことが、他の人より自然にできるタイプです。",
+    strengths: ["論理的思考", "データ分析", "問題解決力", "正確性", "調査力"],
+    fukugyo: "経理・会計サポート・データ入力・リサーチ・市場調査・SEO分析・ファクトチェック",
+    message: "「なぜそうなるのか」を考え続けるあなたの頭脳は、答えのない問題に最も強い。直感ではなく根拠で動けることは、信頼の証です。"
+  },
+  "クリエイティブ発想型": {
+    emoji: "✨",
+    desc: "「こんなのあったら面白いのに」というアイデアが次々と湧いてくるタイプです。既存の枠にとらわれず、新しい視点で物事を見られます。表現したい・形にしたいという衝動が、あなたの原動力です。",
+    strengths: ["発想力", "創造力", "表現力", "柔軟性", "企画力"],
+    fukugyo: "ライター・ブロガー・SNSコンテンツ制作・デザインサポート・動画編集・企画提案",
+    message: "「血迷ったかも」と思ったアイデアが、実は一番面白いことが多い。あなたの「ちょっと変なアイデア」を、世界はまだ知らないだけです。"
+  },
+  "実務遂行型": {
+    emoji: "⚡",
+    desc: "「決めたことをきちんとやり遂げる」力が強みです。計画を立て、一つ一つ確実にこなすあなたは、チームや組織の中で頼られる存在になります。地道な作業も最後までやり切れる忍耐力と正確さが際立っています。",
+    strengths: ["実行力", "正確性", "計画力", "忍耐力", "管理能力"],
+    fukugyo: "事務代行・データ入力・文書作成・経理補助・スケジュール管理・在庫管理",
+    message: "「地道にコツコツ」を続けられる人は、実はとても少ない。あなたのやり遂げる力は、多くの人が「すごい」と思っているスキルです。"
+  },
+  "教育伝達型": {
+    emoji: "📚",
+    desc: "「分かりやすく伝える」ことが自然にできるタイプです。相手のレベルに合わせて説明を変えたり、複雑なことをシンプルに伝えたりする力があります。教えることで、自分も深く理解できる学習者でもあります。",
+    strengths: ["説明力", "伝達力", "教育力", "忍耐力", "共感力"],
+    fukugyo: "オンライン講師・マニュアル作成・研修サポート・家庭教師・学習支援・ライター",
+    message: "「なんでこんな当たり前のことが伝わらないんだろう」と思った経験が、あなたの伝達力を磨いてきました。その「当たり前」を丁寧に届けられる人は、思っているより少ないのです。"
+  },
+  "リーダーコーディネート型": {
+    emoji: "🌐",
+    desc: "人や物事をまとめ、全体を俯瞰して動かす力があります。誰がどんな役割に向いているかを見抜き、チームのパフォーマンスを最大化できるタイプです。「全体像」を見ながら動けるあなたは、組織の中心になれる存在です。",
+    strengths: ["統率力", "俯瞰力", "調整力", "判断力", "コミュニケーション力"],
+    fukugyo: "プロジェクト管理・チームサポート・コンサルティング・イベント企画・コーディネーター",
+    message: "「誰がどこにいるか」を常に把握しながら動けるあなたは、チームの羅針盤です。その全体を見渡す力は、リーダーとしての素質そのものです。"
+  }
+};
+
+let currentQ = 0;
+let scores = {};
+let answers = [];
+
+Object.keys(typeData).forEach(t => scores[t] = 0);
+
+function startQuiz() {
+  document.getElementById('startSection').style.display = 'none';
+  document.getElementById('header').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[currentQ];
+  const pct = Math.round((currentQ / questions.length) * 100);
+
+  document.getElementById('progressLabel').textContent = `質問 ${currentQ + 1} / ${questions.length}`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  const area = document.getElementById('questionArea');
+  area.style.display = 'block';
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const choicesHTML = q.choices.map((c, i) => `
+    <button class="choice ${answers[currentQ] === i ? 'selected' : ''}"
+      onclick="selectChoice(${i})" id="choice${i}">
+      <span class="choice-letter">${letters[i]}</span>
+      <span>${c.text}</span>
+    </button>
+  `).join('');
+
+  area.innerHTML = `
+    <div class="question-card">
+      <div class="q-num">Question ${currentQ + 1}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="choices">${choicesHTML}</div>
+      <div class="nav-row">
+        ${currentQ > 0 ? `<button class="btn-back" onclick="goBack()">← 戻る</button>` : ''}
+        <button class="btn-next" id="nextBtn"
+          onclick="nextQuestion()"
+          ${answers[currentQ] === undefined ? 'disabled' : ''}>
+          ${currentQ < questions.length - 1 ? '次の質問 →' : '結果を見る ✨'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function selectChoice(idx) {
+  answers[currentQ] = idx;
+  document.querySelectorAll('.choice').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextQuestion() {
+  const choice = questions[currentQ].choices[answers[currentQ]];
+  choice.types.forEach(t => scores[t] = (scores[t] || 0) + 1);
+
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    showQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    showLoading();
+  }
+}
+
+function goBack() {
+  const prevChoice = questions[currentQ].choices[answers[currentQ]];
+  if (prevChoice) {
+    prevChoice.types.forEach(t => scores[t] = Math.max(0, (scores[t] || 0) - 1));
+  }
+  currentQ--;
+  showQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const loadingMessages = [
+  'あなたの答えを分析しています...',
+  '強みのパターンを読み取っています...',
+  '向いている仕事を照合しています...',
+  'あなただけの結果を生成しています...'
+];
+
+function showLoading() {
+  document.getElementById('questionArea').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('loadingScreen').style.display = 'block';
+
+  let idx = 0;
+  const interval = setInterval(() => {
+    idx = (idx + 1) % loadingMessages.length;
+    document.getElementById('loadingText').textContent = loadingMessages[idx];
+  }, 800);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    showResult();
+  }, 3200);
+}
+
+function showResult() {
+  const topType = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const data = typeData[topType];
+
+  document.getElementById('loadingScreen').style.display = 'none';
+
+  const resultHTML = `
+    <div class="result-card">
+      <div class="result-type-label">あなたのタイプ</div>
+      <span class="result-emoji">${data.emoji}</span>
+      <div class="result-type-name">${topType}</div>
+      <p class="result-desc">${data.desc}</p>
+
+      <div class="strength-tags">
+        ${data.strengths.map(s => `<span class="strength-tag">${s}</span>`).join('')}
+      </div>
+
+      <div class="fukugyo-section">
+        <div class="fukugyo-title">向いている複業・仕事スタイル</div>
+        <div class="fukugyo-list">${data.fukugyo}</div>
+      </div>
+
+      <div class="message-section">
+        <div class="message-title">あなたへのメッセージ</div>
+        <div class="message-text">${data.message}</div>
+      </div>
+
+      <div class="cta-section">
+        <a href="https://note.com/ai_83_wa" target="_blank" class="btn-cta-primary">
+          スキルを言語化して複業を始める →<br>
+          <span style="font-size:12px;font-weight:400;opacity:0.8">スキル診断ツール（500円）で自己紹介文まで自動生成</span>
+        </a>
+        <a href="https://note.com/ai_83_wa" target="_blank" class="btn-cta-secondary">
+          もっと詳しく診断する（100円）→
+        </a>
+        <button class="btn-retry" onclick="retryQuiz()">
+          もう一度診断する
+        </button>
+      </div>
+    </div>
+
+    <div class="notice">
+      <strong>📋 準備中のお知らせ</strong>
+      現在、タイプ診断とスキル診断の完全連動版を準備中です。
+      連動版リリース時には、X（@Ai83wa）でお知らせします。
+      今すぐスキルを言語化したい方はスキル診断ツールをご利用ください。
+    </div>
+  `;
+
+  const resultScreen = document.getElementById('resultScreen');
+  resultScreen.style.display = 'block';
+  resultScreen.innerHTML = resultHTML;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function retryQuiz() {
+  currentQ = 0;
+  answers = [];
+  Object.keys(scores).forEach(t => scores[t] = 0);
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('header').style.display = 'block';
+  document.getElementById('startSection').style.display = 'block';
+  document.getElementById('questionArea').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
