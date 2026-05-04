@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIWA 救急箱 vol.2 | フリマ「売れる文章」生成ツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Opti:wght@400;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FFFDF7;
+  --surface: #FFFFFF;
+  --surface2: #FFF8EC;
+  --border: #EDE8DC;
+  --border2: #D9D0BC;
+  --ink: #1C1810;
+  --ink2: #6B6150;
+  --ink3: #B0A490;
+  --accent: #C4531A;
+  --accent2: #E06B2A;
+  --accent-light: #FEF0E7;
+  --green: #2D6A4F;
+  --green-light: #EBF5EF;
+  --blue: #1E4D8C;
+  --blue-light: #EBF0FA;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C4531A' fill-opacity='0.03'%3E%3Ccircle cx='20' cy='20' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+}
+
+/* ヘッダー */
+.header {
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.8s ease both;
+}
+
+.series-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-light);
+  border: 1px solid rgba(196,83,26,0.2);
+  border-radius: 100px;
+  padding: 4px 14px;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.series-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+h1 {
+  font-family: 'Kaisei Opti', serif;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+}
+
+h1 em {
+  font-style: normal;
+  color: var(--accent);
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 1px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.8;
+}
+
+.diff-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--ink2);
+}
+
+.diff-box strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 0.05em; }
+
+/* プラットフォーム選択 */
+.platform-section {
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink3);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.platform-btn {
+  padding: 14px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.platform-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.platform-btn.on {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  box-shadow: 0 0 0 3px rgba(196,83,26,0.1);
+}
+
+.platform-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.platform-sub {
+  font-size: 10px;
+  color: var(--ink3);
+}
+
+.platform-btn.on .platform-name { color: var(--accent); }
+
+/* フォームカード */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.8s 0.15s ease both;
+}
+
+.card-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-family: 'Kaisei Opti', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+}
+
+.field { margin-bottom: 1.1rem; }
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink2);
+  margin-bottom: 5px;
+}
+
+.required {
+  color: var(--accent);
+  margin-left: 3px;
+}
+
+textarea, input[type="text"], select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.7;
+}
+
+textarea { resize: vertical; min-height: 90px; }
+
+textarea:focus, input:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(196,83,26,0.08);
+  background: var(--surface);
+}
+
+textarea::placeholder, input::placeholder { color: var(--ink3); font-size: 13px; }
+
+select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236B6150' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 10px;
+}
+
+/* ボタン */
+.btn-primary {
+  width: 100%;
+  padding: 1.1rem;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.05em;
+  margin-top: 0.5rem;
+}
+
+.btn-primary:hover {
+  background: var(--accent2);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(196,83,26,0.3);
+}
+
+.btn-outline {
+  width: 100%;
+  padding: 0.875rem;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink2);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* プロンプト生成エリア */
+.prompt-card {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-lg);
+  display: none;
+  animation: fadeUp 0.6s ease both;
+}
+
+.prompt-card.show { display: block; }
+
+.prompt-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.prompt-icon {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  background: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.prompt-title {
+  font-family: 'Kaisei Opti', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+
+.prompt-sub {
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+.how-to {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+.how-to strong {
+  display: block;
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.prompt-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 1rem;
+  max-height: 360px;
+  overflow-y: auto;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.copy-row {
+  display: flex;
+  gap: 8px;
+}
+
+.copy-btn {
+  flex: 1;
+  padding: 0.875rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover { background: var(--accent2); }
+.copy-btn.copied { background: var(--green); }
+
+.claude-btn {
+  padding: 0.875rem 1.25rem;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink2);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.claude-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* 結果エリア */
+.result-section {
+  display: none;
+  animation: fadeUp 0.6s ease both;
+}
+
+.result-section.show { display: block; }
+
+.paste-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.paste-box {
+  width: 100%;
+  background: var(--surface2);
+  border: 1.5px dashed var(--border2);
+  border-radius: 10px;
+  padding: 1rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  min-height: 160px;
+  resize: vertical;
+  line-height: 1.8;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.paste-box:focus {
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+.paste-box::placeholder { color: var(--ink3); }
+
+/* ステップバー */
+.step-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.8s 0.05s ease both;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.step-circle {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink3);
+  background: var(--surface);
+  transition: all 0.4s;
+}
+
+.step-item.active .step-circle {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.step-item.done .step-circle {
+  background: var(--green-light);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.step-label {
+  font-size: 10px;
+  color: var(--ink3);
+  transition: color 0.4s;
+}
+
+.step-item.active .step-label { color: var(--accent); }
+.step-item.done .step-label { color: var(--green); }
+
+.step-connector {
+  width: 40px;
+  height: 1px;
+  background: var(--border);
+  margin: 0 4px;
+  margin-bottom: 14px;
+}
+
+/* 完成文章 */
+.result-box-wrap {
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.result-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.result-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.result-copy {
+  position: absolute;
+  top: 28px;
+  right: 10px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: white;
+  color: var(--ink2);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.result-copy:hover { border-color: var(--accent); color: var(--accent); }
+.result-copy.copied { background: var(--green-light); color: var(--green); border-color: var(--green); }
+
+/* フッター */
+.footer {
+  text-align: center;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--ink3);
+  line-height: 1.9;
+}
+
+/* アニメーション */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .card, .prompt-card, .paste-card { padding: 1.25rem; }
+  .copy-row { flex-direction: column; }
+  .platform-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <div class="series-badge">
+      <div class="series-dot"></div>
+      AIWA 一人事務のAI救急箱 vol.2
+    </div>
+    <h1>フリマの文章、<br><em>AIに丸投げ</em>しませんか？</h1>
+    <p class="subtitle">メルカリ・ラクマ・ヤフオクの自動生成と何が違うの？<br>答えは「感情が動くかどうか」です。</p>
+
+    <div class="diff-box">
+      <strong>フリマ自動生成 vs AIWAツールの違い</strong>
+      フリマの自動生成 → 商品情報を整理するだけ<br>
+      AIWAのツール　→ 「買いたい気持ち」を作る<br><br>
+      キャッチコピー・第一印象・シーン提案・値下げ交渉の返し文まで。<br>
+      思わず「いいね！」を押したくなる文章をAIが作ります。
+    </div>
+  </div>
+
+  <!-- ステップバー -->
+  <div class="step-bar" id="stepBar">
+    <div class="step-item active" id="s1">
+      <div class="step-circle">1</div>
+      <div class="step-label">情報入力</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="s2">
+      <div class="step-circle">2</div>
+      <div class="step-label">AIに送る</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="s3">
+      <div class="step-circle">3</div>
+      <div class="step-label">結果を貼る</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="s4">
+      <div class="step-circle">4</div>
+      <div class="step-label">完成！</div>
+    </div>
+  </div>
+
+  <!-- プラットフォーム選択 -->
+  <div class="platform-section">
+    <div class="section-label">Step 1 — どのフリマに出品しますか？</div>
+    <div class="platform-grid">
+      <div class="platform-btn on" id="p-mercari" onclick="setPlatform('mercari','メルカリ')">
+        <span class="platform-name">メルカリ</span>
+        <span class="platform-sub">親しみやすい文体</span>
+      </div>
+      <div class="platform-btn" id="p-rakuma" onclick="setPlatform('rakuma','ラクマ')">
+        <span class="platform-name">ラクマ</span>
+        <span class="platform-sub">丁寧な文体</span>
+      </div>
+      <div class="platform-btn" id="p-yahoo" onclick="setPlatform('yahoo','ヤフオク')">
+        <span class="platform-name">ヤフオク</span>
+        <span class="platform-sub">詳細な文体</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 入力フォーム -->
+  <div class="card" id="formCard">
+    <div class="card-label">商品情報を入力</div>
+    <div class="card-title">難しい言葉は不要。思ったまま書いてください。</div>
+
+    <div class="field">
+      <label>商品名<span class="required">＊</span></label>
+      <input type="text" id="itemName" placeholder="例：ユニクロ フリースジャケット Mサイズ ネイビー">
+    </div>
+
+    <div class="field">
+      <label>状態・特徴・使用感<span class="required">＊</span></label>
+      <textarea id="itemCondition" placeholder="例：2回着用・毛玉なし・洗濯済み。&#10;&#10;💡 こんなことも書いてみてください：&#10;・鏡で見た時に好きだったポイントは？&#10;・届いた時に「おっ」と思った手触りや色は？&#10;・使っていて褒められたことはある？&#10;思ったまま書くだけでOKです。"></textarea>
+    </div>
+
+    <div class="field">
+      <label>定価・購入時期（任意）</label>
+      <input type="text" id="itemPrice" placeholder="例：定価3,990円・2年前購入">
+    </div>
+
+    <div class="field">
+      <label>出品価格<span class="required">＊</span></label>
+      <input type="text" id="sellPrice" placeholder="例：1,200円">
+    </div>
+
+    <div class="field">
+      <label>買ってほしい人のイメージ（任意）</label>
+      <input type="text" id="target" placeholder="例：アウトドア好きな方・在宅ワーク中の羽織りに">
+    </div>
+
+    <button class="btn-primary" onclick="generatePrompt()">
+      AIへの質問文を自動作成する →
+    </button>
+  </div>
+
+  <!-- プロンプト生成 -->
+  <div class="prompt-card" id="promptCard">
+    <div class="prompt-header">
+      <div class="prompt-icon">📋</div>
+      <div>
+        <div class="prompt-title">Claudeへの質問文ができました</div>
+        <div class="prompt-sub">コピーしてClaude（claude.ai）に貼り付けて送信してください</div>
+      </div>
+    </div>
+
+    <div class="how-to">
+      <strong>📌 使い方</strong>
+      ①「コピーする」を押す → ②Claude（claude.ai）を開く → ③貼り付けて送信 → ④回答をここに貼り戻す
+    </div>
+
+    <div class="prompt-box" id="promptBox"></div>
+
+    <div class="copy-row">
+      <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">
+        📋 コピーする
+      </button>
+      <a href="https://claude.ai" target="_blank" class="claude-btn">
+        Claudeを開く ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- 結果貼り付け -->
+  <div class="result-section" id="resultSection">
+    <div class="paste-card">
+      <div class="card-label">Step 3 — Claudeの回答を貼り付ける</div>
+      <div class="card-title">回答をそのまま貼ってください</div>
+      <textarea class="paste-box" id="pasteInput"
+        placeholder="Claudeからの回答をここにコピー＆ペーストしてください。&#10;&#10;キャッチコピー・第一印象・商品説明・シーン提案・ハッシュタグ・値下げ返し文が返ってきます。"></textarea>
+      <button class="btn-primary" onclick="showFinalPrompt()">
+        出品用の文章をまとめる →
+      </button>
+    </div>
+  </div>
+
+  <!-- 最終プロンプト -->
+  <div class="prompt-card" id="finalPromptCard">
+    <div class="prompt-header">
+      <div class="prompt-icon">✨</div>
+      <div>
+        <div class="prompt-title">Step 4 — もう一度Claudeに送ってください</div>
+        <div class="prompt-sub">出品用に整理した最終版を生成します</div>
+      </div>
+    </div>
+    <div class="how-to">
+      <strong>📌 手順</strong>
+      ①コピー → ②Claudeに貼り付けて送信 → ③返ってきた文章をそのままフリマに貼るだけ！
+    </div>
+    <div class="prompt-box" id="finalPromptBox"></div>
+    <div class="copy-row">
+      <button class="copy-btn" id="finalCopyBtn" onclick="copyFinal()">
+        📋 最終プロンプトをコピー
+      </button>
+      <a href="https://claude.ai" target="_blank" class="claude-btn">
+        Claudeを開く ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- リセット -->
+  <div id="resetArea" style="display:none; margin-top:1rem;">
+    <button class="btn-outline" onclick="resetAll()">← 別の商品を作る</button>
+  </div>
+
+  <!-- フッター -->
+  <div class="footer">
+    <strong>AIWA 一人事務のAI救急箱 vol.2</strong><br>
+    フリマ「売れる文章」生成ツール<br>
+    本ツールは Claude（Anthropic社）と連携して動作します<br><br>
+    © 2026 AIWA — AI Multi-Work Alliance｜山﨑代表<br>
+    note: <strong>AI</strong>（えーあい／あい）｜X: <strong>@Ai83wa</strong><br><br>
+    本ツールの無断転載・再配布を禁止します。<br>
+    Claude は Anthropic 社の登録商標です。
+  </div>
+
+</div>
+
+<script>
+let selectedPlatform = 'メルカリ';
+let inputData = {};
+
+function setPlatform(id, name) {
+  selectedPlatform = name;
+  document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('p-' + id).classList.add('on');
+}
+
+function setStep(n) {
+  for(let i = 1; i <= 4; i++) {
+    const el = document.getElementById('s' + i);
+    el.className = 'step-item';
+    if(i < n) el.classList.add('done');
+    else if(i === n) el.classList.add('active');
+  }
+}
+
+function generatePrompt() {
+  const name = document.getElementById('itemName').value.trim();
+  const condition = document.getElementById('itemCondition').value.trim();
+  const sellPrice = document.getElementById('sellPrice').value.trim();
+  if(!name || !condition || !sellPrice) {
+    alert('商品名・状態・出品価格は入力してください');
+    return;
+  }
+
+  const price = document.getElementById('itemPrice').value.trim();
+  const target = document.getElementById('target').value.trim();
+
+  inputData = { name, condition, price, sellPrice, target };
+
+  const platformGuide = {
+    'メルカリ': 'タイトル40文字以内。親しみやすく温かみのある文体。ハッシュタグ重要。絵文字OK。',
+    'ラクマ': 'タイトル40文字以内。丁寧で誠実な文体。過度な絵文字は避ける。',
+    'ヤフオク': 'タイトル65文字以内。詳細で信頼感のある文体。スペック・状態を詳しく。'
+  };
+
+  const prompt = `あなたは「思わず買いたくなる」フリマ出品文のプロのコピーライターです。
+フリマアプリの自動生成と違い、商品の「感情的な魅力」を引き出し、見た人が「これ欲しい！」と思う文章を作ります。
+
+【プラットフォーム】${selectedPlatform}
+${platformGuide[selectedPlatform]}
+
+【商品名】${name}
+【状態・特徴・使用感】${condition}
+【定価・購入時期】${price || '不明'}
+【出品価格】${sellPrice}
+【買ってほしい人のイメージ】${target || '特に指定なし'}
+
+以下の順番で作成してください：
+
+■ キャッチコピー（一行・思わず止まる一言）
+使用感や見た目の印象を感情で表現。「これ着てから褒められ率が上がった」「手放すのが惜しいけど断捨離」など。
+
+■ 商品の第一印象（見た目・雰囲気を感情で表現・2〜3行）
+手に取った瞬間の感覚、色の印象、質感など。
+
+■ 商品説明文（200文字程度・買いたい気持ちにさせる）
+
+■ こんな人にぴったり（具体的なシーン提案・2〜3個）
+✓ 〜したい人、の形式で。
+
+■ ハッシュタグ（5個・検索されやすいもの）
+
+■ 値下げ交渉への返し文
+丁重に断りつつ好印象を残す。温かみのある文章で。
+
+---
+🤖 Generated by AIWA 一人事務のAI救急箱 vol.2
+Created by 山﨑代表（AIWA / note: AI / X: @Ai83wa）
+© 2026 AIWA — AI Multi-Work Alliance`;
+
+  document.getElementById('promptBox').textContent = prompt;
+  document.getElementById('promptCard').classList.add('show');
+  document.getElementById('resultSection').classList.add('show');
+  setStep(2);
+
+  setTimeout(() => {
+    document.getElementById('promptCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function copyPrompt() {
+  const text = document.getElementById('promptBox').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ コピーしました！Claudeに貼り付けてください';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 コピーする';
+      btn.classList.remove('copied');
+    }, 3000);
+  });
+}
+
+function showFinalPrompt() {
+  const paste = document.getElementById('pasteInput').value.trim();
+  if(!paste) { alert('Claudeの回答を貼り付けてください'); return; }
+
+  const finalPrompt = `以下のAI分析結果をもとに、${selectedPlatform}にそのまま貼り付けられる出品文を最終版として整理してください。
+
+【AI生成結果】
+${paste}
+
+【商品情報】
+商品名：${inputData.name}
+状態：${inputData.condition}
+出品価格：${inputData.sellPrice}
+
+以下の形式で最終版を作成してください：
+
+▼ タイトル（コピペ用）
+
+▼ 商品説明文（コピペ用）
+
+▼ ハッシュタグ（コピペ用）
+
+▼ 値下げ交渉への返し文（コピペ用）
+
+---
+それぞれ「そのままコピーして貼り付けできる」形式でお願いします。`;
+
+  document.getElementById('finalPromptBox').textContent = finalPrompt;
+  document.getElementById('finalPromptCard').classList.add('show');
+  document.getElementById('resetArea').style.display = 'block';
+  setStep(4);
+
+  setTimeout(() => {
+    document.getElementById('finalPromptCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function copyFinal() {
+  const text = document.getElementById('finalPromptBox').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('finalCopyBtn');
+    btn.textContent = '✓ コピーしました！Claudeに貼り付けてください';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 最終プロンプトをコピー';
+      btn.classList.remove('copied');
+    }, 3000);
+  });
+}
+
+function resetAll() {
+  document.getElementById('itemName').value = '';
+  document.getElementById('itemCondition').value = '';
+  document.getElementById('itemPrice').value = '';
+  document.getElementById('sellPrice').value = '';
+  document.getElementById('target').value = '';
+  document.getElementById('pasteInput').value = '';
+  document.getElementById('promptCard').classList.remove('show');
+  document.getElementById('resultSection').classList.remove('show');
+  document.getElementById('finalPromptCard').classList.remove('show');
+  document.getElementById('resetArea').style.display = 'none';
+  inputData = {};
+  setStep(1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
