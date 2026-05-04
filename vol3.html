@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIWA 救急箱 vol.3 | タスク整理AI「今日の最低ライン」処方箋</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F4EF;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE8;
+  --border: #E2DDD6;
+  --border2: #CFC9C0;
+  --ink: #1E1C18;
+  --ink2: #5C5750;
+  --ink3: #A09890;
+  --accent: #4A7C59;
+  --accent2: #5E9E71;
+  --accent-light: #EAF2ED;
+  --amber: #C4873A;
+  --amber-light: #FBF3E8;
+  --red: #C44A4A;
+  --red-light: #FAEAEA;
+  --blue: #3A6EC4;
+  --blue-light: #EAF0FB;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%234A7C59' fill-opacity='0.04'%3E%3Ccircle cx='16' cy='16' r='1'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 5rem;
+}
+
+/* ヘッダー */
+.header {
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.8s ease both;
+}
+
+.series-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-light);
+  border: 1px solid rgba(74,124,89,0.25);
+  border-radius: 100px;
+  padding: 4px 14px;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.series-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s infinite;
+}
+
+h1 {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-weight: 900;
+  line-height: 1.3;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+}
+
+h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+}
+
+/* 処方箋スタイルのボックス */
+.rx-box {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.rx-box::before {
+  content: 'Rx';
+  position: absolute;
+  top: -14px;
+  left: 16px;
+  background: var(--accent);
+  color: white;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.05em;
+}
+
+.rx-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+.rx-text {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.8;
+}
+
+/* ステップバー */
+.step-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.8s 0.05s ease both;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.step-circle {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink3);
+  background: var(--surface);
+  transition: all 0.4s;
+}
+
+.step-item.active .step-circle {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.step-item.done .step-circle {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.step-label {
+  font-size: 10px;
+  color: var(--ink3);
+  transition: color 0.4s;
+}
+
+.step-item.active .step-label,
+.step-item.done .step-label { color: var(--accent); }
+
+.step-connector {
+  width: 36px;
+  height: 1px;
+  background: var(--border);
+  margin: 0 4px;
+  margin-bottom: 14px;
+}
+
+/* カード */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+.card-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+  line-height: 1.4;
+}
+
+/* 気分選択 */
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.mood-btn {
+  padding: 14px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.mood-btn:hover { transform: translateY(-2px); }
+
+.mood-btn.on-genki {
+  border-color: var(--blue);
+  background: var(--blue-light);
+}
+
+.mood-btn.on-futsu {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.mood-btn.on-shindoi {
+  border-color: var(--amber);
+  background: var(--amber-light);
+}
+
+.mood-emoji { font-size: 24px; display: block; margin-bottom: 4px; }
+.mood-name { font-size: 12px; font-weight: 700; color: var(--ink); display: block; }
+.mood-sub { font-size: 10px; color: var(--ink3); }
+
+/* フォーム */
+.field { margin-bottom: 1.1rem; }
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink2);
+  margin-bottom: 5px;
+}
+
+.required { color: var(--red); margin-left: 3px; }
+
+textarea, input[type="text"] {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.7;
+}
+
+textarea { resize: vertical; min-height: 110px; }
+
+textarea:focus, input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(74,124,89,0.1);
+  background: var(--surface);
+}
+
+textarea::placeholder, input::placeholder { color: var(--ink3); font-size: 13px; }
+
+/* ご褒美インプット */
+.reward-input-wrap {
+  position: relative;
+}
+
+.reward-emoji {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+}
+
+.reward-input {
+  padding-left: 40px !important;
+}
+
+/* ボタン */
+.btn-primary {
+  width: 100%;
+  padding: 1.1rem;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.05em;
+  margin-top: 0.5rem;
+}
+
+.btn-primary:hover {
+  background: var(--accent2);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(74,124,89,0.3);
+}
+
+.btn-outline {
+  width: 100%;
+  padding: 0.875rem;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink2);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* プロンプトカード */
+.prompt-card {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-lg);
+  display: none;
+  animation: fadeUp 0.6s ease both;
+}
+
+.prompt-card.show { display: block; }
+
+.prompt-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.prompt-icon {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  background: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.prompt-title {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+
+.prompt-sub { font-size: 12px; color: var(--ink2); }
+
+.how-to {
+  background: var(--accent-light);
+  border: 1px solid rgba(74,124,89,0.2);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  font-size: 13px;
+  color: var(--accent);
+  line-height: 1.7;
+}
+
+.how-to strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.prompt-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 1rem;
+  max-height: 380px;
+  overflow-y: auto;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.copy-row {
+  display: flex;
+  gap: 8px;
+}
+
+.copy-btn {
+  flex: 1;
+  padding: 0.875rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover { background: var(--accent2); }
+.copy-btn.copied { background: #2D6A4F; }
+
+.claude-btn {
+  padding: 0.875rem 1.25rem;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink2);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.claude-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* 結果エリア */
+.result-section { display: none; animation: fadeUp 0.6s ease both; }
+.result-section.show { display: block; }
+
+.paste-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.paste-box {
+  width: 100%;
+  background: var(--surface2);
+  border: 1.5px dashed var(--border2);
+  border-radius: 10px;
+  padding: 1rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  min-height: 180px;
+  resize: vertical;
+  line-height: 1.8;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.paste-box:focus { border-color: var(--accent); border-style: solid; }
+.paste-box::placeholder { color: var(--ink3); }
+
+/* 服用上の注意 */
+.warning-box {
+  background: var(--amber-light);
+  border: 1px solid rgba(196,135,58,0.3);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+  font-size: 12px;
+  color: var(--amber);
+  line-height: 1.7;
+}
+
+.warning-box strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+/* フッター */
+.footer {
+  text-align: center;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--ink3);
+  line-height: 1.9;
+}
+
+/* アニメーション */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@media (max-width: 480px) {
+  .card, .prompt-card, .paste-card { padding: 1.25rem; }
+  .copy-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <div class="series-badge">
+      <div class="series-dot"></div>
+      AIWA 一人事務のAI救急箱 vol.3
+    </div>
+    <h1>「やらなきゃ」を<br><em>「これだけでいい」</em>に変える</h1>
+    <p class="subtitle">頑張りすぎるあなたへ。今日の最低ラインを決めて、心のゆとりを取り戻しましょう。</p>
+
+    <div class="rx-box">
+      <div class="rx-title">このツールの処方箋</div>
+      <div class="rx-text">
+        今日やることを箇条書きで入れるだけ。AIが優先順位・最低ライン・バッファ時間・ご褒美カウントダウンまでセットで処方します。完璧にやらなくていい。今日を乗り越えるための最小限を見つけましょう。
+      </div>
+    </div>
+  </div>
+
+  <!-- ステップバー -->
+  <div class="step-bar" id="stepBar">
+    <div class="step-item active" id="s1">
+      <div class="step-circle">1</div>
+      <div class="step-label">気分を選ぶ</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="s2">
+      <div class="step-circle">2</div>
+      <div class="step-label">入力する</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="s3">
+      <div class="step-circle">3</div>
+      <div class="step-label">AIに送る</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="s4">
+      <div class="step-circle">4</div>
+      <div class="step-label">処方完了</div>
+    </div>
+  </div>
+
+  <!-- 入力フォーム -->
+  <div class="card" id="formCard">
+    <div class="card-eyebrow">Step 1 — 今の気分を選んでください</div>
+    <div class="card-title">正直に選ぶほど、処方が効きます。</div>
+
+    <div class="mood-grid">
+      <div class="mood-btn" id="mood-genki" onclick="setMood('genki')">
+        <span class="mood-emoji">⚡</span>
+        <span class="mood-name">元気</span>
+        <span class="mood-sub">やる気あり</span>
+      </div>
+      <div class="mood-btn" id="mood-futsu" onclick="setMood('futsu')">
+        <span class="mood-emoji">🌤</span>
+        <span class="mood-name">普通</span>
+        <span class="mood-sub">まあまあ</span>
+      </div>
+      <div class="mood-btn" id="mood-shindoi" onclick="setMood('shindoi')">
+        <span class="mood-emoji">🌧</span>
+        <span class="mood-name">しんどい</span>
+        <span class="mood-sub">ちょっとキツイ</span>
+      </div>
+    </div>
+
+    <div class="card-eyebrow" style="margin-top:1.25rem">Step 2 — タスクを入力</div>
+    <div class="card-title" style="font-size:15px">難しく考えなくてOK。思いついたまま書いてください。</div>
+
+    <div class="field">
+      <label>今日やること<span class="required">＊</span></label>
+      <textarea id="tasks" placeholder="例：&#10;・メールの返信&#10;・企画書の下書き&#10;・洗濯&#10;・買い物&#10;・子どもの宿題確認&#10;&#10;箇条書きでもメモ書きでも何でもOKです"></textarea>
+    </div>
+
+    <div class="field">
+      <label>締切・気になっていること（任意）</label>
+      <input type="text" id="deadline" placeholder="例：15時までに上司に報告・明日の朝イチでプレゼン">
+    </div>
+
+    <div class="field">
+      <label>今日のご褒美（任意）</label>
+      <div class="reward-input-wrap">
+        <span class="reward-emoji">🎁</span>
+        <input type="text" id="reward" class="reward-input" placeholder="例：タバコ休憩・缶コーヒー・好きな動画・ゆっくりお風呂・コンビニスイーツ・散歩">
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="generatePrompt()">
+      今日の処方箋を作る →
+    </button>
+  </div>
+
+  <!-- プロンプト生成 -->
+  <div class="prompt-card" id="promptCard">
+    <div class="prompt-header">
+      <div class="prompt-icon">📋</div>
+      <div>
+        <div class="prompt-title">Claudeへの処方依頼文ができました</div>
+        <div class="prompt-sub">コピーしてClaude（claude.ai）に貼り付けて送信してください</div>
+      </div>
+    </div>
+
+    <div class="how-to">
+      <strong>📌 処方の手順</strong>
+      ①「コピーする」を押す → ②Claude（claude.ai）を開く → ③貼り付けて送信 → ④今日の処方箋が完成！
+    </div>
+
+    <div class="prompt-box" id="promptBox"></div>
+
+    <div class="copy-row">
+      <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">
+        📋 コピーする
+      </button>
+      <a href="https://claude.ai" target="_blank" class="claude-btn">
+        Claudeを開く ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- 結果貼り付け -->
+  <div class="result-section" id="resultSection">
+    <div class="paste-card">
+      <div class="card-eyebrow">Step 4 — 処方結果を貼り付ける</div>
+      <div class="card-title">Claudeの回答をそのまま貼ってください</div>
+      <textarea class="paste-box" id="pasteInput"
+        placeholder="Claudeからの処方結果をここにコピー＆ペーストしてください。&#10;&#10;優先順位・最低ライン・バッファ時間・ご褒美カウントダウン・応援メッセージが返ってきます。"></textarea>
+
+      <div class="warning-box">
+        <strong>⚠ 服用上の注意</strong>
+        最低ラインはあくまで「今日の最小限」です。できたら追加でOK、できなくても大丈夫。このツールは完璧を目指すためではなく、今日を乗り越えるためのものです。
+      </div>
+    </div>
+
+    <button class="btn-outline" onclick="resetAll()">← 別の日の処方箋を作る</button>
+  </div>
+
+  <!-- フッター -->
+  <div class="footer">
+    <strong>AIWA 一人事務のAI救急箱 vol.3</strong><br>
+    タスク整理AI「今日の最低ライン」処方箋<br>
+    本ツールは Claude（Anthropic社）と連携して動作します<br><br>
+    © 2026 AIWA — AI Multi-Work Alliance｜代表<br>
+    note: <strong>AI</strong>（えーあい／あい）｜X: <strong>@Ai83wa</strong><br><br>
+    本ツールの無断転載・再配布を禁止します。<br>
+    個人・商用利用可。二次配布・販売は不可。<br>
+    Claude は Anthropic 社の登録商標です。
+  </div>
+
+</div>
+
+<script>
+let selectedMood = '';
+let moodLabel = '';
+
+function setMood(mood) {
+  selectedMood = mood;
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.remove('on-genki', 'on-futsu', 'on-shindoi');
+  });
+  document.getElementById('mood-' + mood).classList.add('on-' + mood);
+  const labels = { genki: '元気⚡', futsu: '普通🌤', shindoi: 'しんどい🌧' };
+  moodLabel = labels[mood];
+}
+
+function setStep(n) {
+  for(let i = 1; i <= 4; i++) {
+    const el = document.getElementById('s' + i);
+    el.className = 'step-item';
+    if(i < n) el.classList.add('done');
+    else if(i === n) el.classList.add('active');
+  }
+}
+
+function generatePrompt() {
+  const tasks = document.getElementById('tasks').value.trim();
+  if(!tasks) { alert('今日やることを入力してください'); return; }
+  if(!selectedMood) { alert('今の気分を選んでください'); return; }
+
+  const deadline = document.getElementById('deadline').value.trim();
+  const reward = document.getElementById('reward').value.trim();
+
+  const moodGuide = {
+    genki: `今日は元気な状態です。コーチのような力強いトーンで、やる気をさらに引き出す応援メッセージを書いてください。例：「今のうちにラスボスを倒しちゃおう！」`,
+    futsu: `今日は普通の状態です。バランスの取れた、温かみのあるトーンで応援メッセージを書いてください。`,
+    shindoi: `今日はしんどい状態です。看護師さんのような受容的・寄り添うトーンで応援メッセージを書いてください。例：「今日は生きてるだけで100点！」完璧主義からユーザーを解放する言葉を使ってください。`
+  };
+
+  const prompt = `あなたはタスク整理と心のゆとりを専門とするAIアシスタントです。
+頑張りすぎる人を「完璧主義」から救い、「今日を乗り越えるための最小限」を見つけることを得意としています。
+
+【今日やること】
+${tasks}
+
+【締切・気になっていること】
+${deadline || 'なし'}
+
+【今の気分】
+${moodLabel}
+
+【今日のご褒美】
+${reward || '未設定'}
+
+以下の形式で「今日の処方箋」を作成してください：
+
+---
+📋 今日の処方箋
+---
+
+■ 優先順位付きタスクリスト
+タスクを重要度と緊急度で並べ替えて、番号をつけてください。
+各タスクの横に所要時間の目安を（約○分）で記載してください。
+
+■ 今日の最低ライン（これだけやればOK）
+全タスクの中から「絶対にやるべき1〜3つ」だけを選んでください。
+「最低ラインをクリアすれば今日は合格」という考え方で。
+
+■ 割り込み予備枠（バッファ）
+「○時〜○時はあえて空けておく」という形で、
+予期せぬ割り込みに対応するための空き時間を提案してください。
+
+■ ご褒美カウントダウン
+${reward ? `「${reward}」までのカウントダウンを、タスクの進捗に合わせて書いてください。例：「あと2つ終わったらプチご褒美タイム！」` : 'ご褒美が未設定の場合は、その人に合いそうな小さなプチご褒美タイムを提案してください。（タバコ休憩・缶コーヒー・散歩など、人それぞれOK）'}
+
+■ 今日の応援メッセージ
+${moodGuide[selectedMood]}
+
+---
+🤖 Generated by AIWA 一人事務のAI救急箱 vol.3
+Created by 代表（AIWA / note: AI / X: @Ai83wa）
+© 2026 AIWA — AI Multi-Work Alliance`;
+
+  document.getElementById('promptBox').textContent = prompt;
+  document.getElementById('promptCard').classList.add('show');
+  document.getElementById('resultSection').classList.add('show');
+  setStep(3);
+
+  setTimeout(() => {
+    document.getElementById('promptCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function copyPrompt() {
+  const text = document.getElementById('promptBox').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ コピーしました！Claudeに貼り付けてください';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 コピーする';
+      btn.classList.remove('copied');
+    }, 3000);
+  });
+}
+
+function resetAll() {
+  document.getElementById('tasks').value = '';
+  document.getElementById('deadline').value = '';
+  document.getElementById('reward').value = '';
+  document.getElementById('pasteInput').value = '';
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.remove('on-genki', 'on-futsu', 'on-shindoi');
+  });
+  selectedMood = '';
+  moodLabel = '';
+  document.getElementById('promptCard').classList.remove('show');
+  document.getElementById('resultSection').classList.remove('show');
+  setStep(1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
