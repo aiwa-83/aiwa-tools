@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あなたの才能タイプ診断 | AIWA 学生向け無料診断</title>
+<link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8F0;--surface:#FFFFFF;--surface2:#FFF3E8;
+  --border:#FFE0C0;--ink:#2D1B00;--ink2:#7D5A3C;--ink3:#B08860;
+  --r:#FF6B6B;--o:#FFB347;--g:#4ECDC4;--b:#45B7D1;--gr:#96CEB4;--p:#C084FC;
+  --shadow:0 4px 20px rgba(255,107,107,0.12);
+  --shadow-lg:0 8px 32px rgba(255,107,107,0.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+
+/* 背景 */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 10% 20%,rgba(255,107,107,0.08) 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 80%,rgba(69,183,209,0.08) 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 50%,rgba(192,132,252,0.05) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+.wrap{position:relative;z-index:1;max-width:660px;margin:0 auto;padding:2rem 1.25rem 5rem}
+
+/* ヘッダー */
+.header{text-align:center;margin-bottom:2.5rem;animation:fadeUp 0.8s ease both}
+
+.aiwa-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,#FF6B6B,#FFB347);
+  border-radius:100px;padding:4px 16px;
+  font-size:11px;color:white;font-weight:700;
+  letter-spacing:0.1em;margin-bottom:1rem;
+  box-shadow:0 4px 12px rgba(255,107,107,0.3);
+}
+
+h1{
+  font-family:'Yomogi',cursive;
+  font-size:clamp(2rem,6vw,3rem);
+  line-height:1.3;margin-bottom:0.75rem;
+  background:linear-gradient(135deg,#FF6B6B 0%,#FFB347 50%,#4ECDC4 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.subtitle{font-size:14px;color:var(--ink2);line-height:1.8;margin-bottom:1.25rem}
+
+.free-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:white;border:2px solid var(--g);
+  border-radius:100px;padding:6px 18px;
+  font-size:13px;color:var(--g);font-weight:700;
+  box-shadow:0 4px 12px rgba(78,205,196,0.2);
+}
+
+/* ステップバー */
+.step-bar{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;margin-bottom:1.75rem;
+  animation:fadeUp 0.8s 0.05s ease both;
+}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:4px}
+.step-circle{
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--ink3);
+  background:white;transition:all 0.4s;
+}
+.step-item.active .step-circle{background:linear-gradient(135deg,var(--r),var(--o));border-color:var(--r);color:white}
+.step-item.done .step-circle{background:var(--g);border-color:var(--g);color:white}
+.step-label{font-size:10px;color:var(--ink3);transition:color 0.4s}
+.step-item.active .step-label{color:var(--r)}
+.step-item.done .step-label{color:var(--g)}
+.step-conn{width:36px;height:2px;background:var(--border);margin:0 4px;margin-bottom:14px;border-radius:1px}
+
+/* プログレスバー */
+.prog-wrap{margin-bottom:1.5rem;animation:fadeUp 0.8s 0.08s ease both;display:none}
+.prog-info{display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-bottom:6px}
+.prog-bar{height:6px;background:var(--border);border-radius:100px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--r),var(--o),var(--g));border-radius:100px;transition:width 0.5s ease}
+
+/* カード */
+.card{
+  background:white;border:2px solid var(--border);
+  border-radius:20px;padding:1.75rem;margin-bottom:1rem;
+  box-shadow:var(--shadow);animation:fadeUp 0.6s ease both;
+}
+
+.card-num{
+  font-size:11px;font-weight:700;letter-spacing:0.15em;
+  color:var(--r);margin-bottom:0.75rem;text-transform:uppercase;
+}
+
+.card-q{
+  font-family:'Yomogi',cursive;
+  font-size:clamp(1.1rem,3.5vw,1.35rem);
+  line-height:1.5;color:var(--ink);margin-bottom:1.25rem;
+}
+
+/* 選択肢 */
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice{
+  padding:16px 18px;border:2px solid var(--border);
+  border-radius:14px;background:var(--surface2);
+  color:var(--ink2);font-size:14px;cursor:pointer;
+  transition:border-color 0.15s,background 0.15s;
+  text-align:left;font-family:'Noto Sans JP',sans-serif;
+  line-height:1.5;display:flex;align-items:center;gap:12px;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;touch-action:manipulation;min-height:56px;
+}
+.choice-icon{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--border);display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:700;
+  color:var(--ink3);flex-shrink:0;transition:background 0.15s;
+}
+.choice:active{opacity:0.85}
+.choice.sel{border-color:var(--r);background:rgba(255,107,107,0.06);color:var(--ink)}
+.choice.sel .choice-icon{background:var(--r);color:white}
+
+/* ニックネーム入力 */
+.nick-input{
+  width:100%;background:var(--surface2);border:2px solid var(--border);
+  border-radius:12px;padding:0.875rem 1rem;
+  font-family:'Noto Sans JP',sans-serif;font-size:16px;
+  color:var(--ink);outline:none;transition:border-color 0.2s;
+}
+.nick-input:focus{border-color:var(--r);box-shadow:0 0 0 3px rgba(255,107,107,0.1)}
+.nick-input::placeholder{color:var(--ink3)}
+
+/* 学年選択 */
+.grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grade-btn{
+  padding:10px;border:2px solid var(--border);border-radius:10px;
+  background:white;color:var(--ink2);font-size:13px;
+  cursor:pointer;text-align:center;transition:all 0.2s;
+  font-family:'Noto Sans JP',sans-serif;font-weight:500;
+}
+.grade-btn:hover{border-color:var(--o);background:rgba(255,179,71,0.05);color:var(--ink)}
+.grade-btn.sel{border-color:var(--o);background:rgba(255,179,71,0.1);color:var(--ink);font-weight:700}
+
+/* ボタン */
+.btn-next{
+  width:100%;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--r),var(--o));
+  color:white;font-family:'Yomogi',cursive;
+  font-size:17px;cursor:pointer;transition:all 0.25s;
+  margin-top:1rem;box-shadow:0 4px 16px rgba(255,107,107,0.3);
+}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,107,0.4)}
+.btn-next:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-back{
+  width:100%;padding:12px;border:2px solid var(--border);
+  border-radius:12px;background:white;color:var(--ink2);
+  font-family:'Noto Sans JP',sans-serif;font-size:13px;
+  cursor:pointer;transition:all 0.2s;margin-top:6px;
+}
+.btn-back:hover{border-color:var(--r);color:var(--r)}
+
+/* ローディング */
+.loading{display:none;text-align:center;padding:3rem;animation:fadeUp 0.6s ease both}
+.loading-emoji{font-size:60px;animation:spin 2s linear infinite;display:block;margin-bottom:1rem}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.loading-text{font-family:'Yomogi',cursive;font-size:18px;color:var(--r)}
+
+/* 結果画面 */
+.result{display:none;animation:fadeUp 0.8s ease both}
+
+.result-card{
+  background:white;border:3px solid;
+  border-radius:24px;padding:2rem;margin-bottom:1rem;
+  text-align:center;position:relative;overflow:hidden;
+  box-shadow:var(--shadow-lg);
+}
+
+.result-ribbon{
+  position:absolute;top:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,var(--r),var(--o),var(--g),var(--b),var(--p));
+}
+
+.result-emoji{font-size:72px;display:block;margin:1rem 0;animation:bounceIn 0.8s ease both}
+.result-type-label{font-size:11px;font-weight:700;letter-spacing:0.18em;margin-bottom:6px}
+.result-type-name{
+  font-family:'Yomogi',cursive;
+  font-size:clamp(1.8rem,5vw,2.6rem);
+  line-height:1.3;margin-bottom:1.25rem;
+}
+.result-nick{font-size:14px;color:var(--ink2);margin-bottom:0.5rem}
+
+.result-desc{
+  font-size:14px;line-height:1.9;color:var(--ink2);
+  text-align:left;margin-bottom:1.25rem;
+  background:var(--surface2);border-radius:12px;padding:1rem;
+}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:1.25rem}
+.tag{
+  font-size:12px;padding:4px 12px;border-radius:100px;
+  font-weight:500;border:2px solid;
+}
+
+.section{border-radius:14px;padding:1.1rem;margin-bottom:1rem;text-align:left}
+.section-label{font-size:11px;font-weight:700;letter-spacing:0.12em;margin-bottom:8px;text-transform:uppercase}
+.section-text{font-size:13px;line-height:1.8;color:var(--ink2)}
+
+.study-style{background:#F0FDF4;border:2px solid #86EFAC}
+.study-label{color:#16A34A}
+.jobs{background:#EFF6FF;border:2px solid #93C5FD}
+.jobs-label{color:#2563EB}
+.message{background:#FFF7ED;border:2px solid #FED7AA}
+.message-label{color:#EA580C}
+.message-text{font-family:'Yomogi',cursive;font-size:15px;line-height:1.8;color:var(--ink)}
+
+/* シェアボタン */
+.share-section{margin-top:1.5rem}
+.share-title{font-size:12px;font-weight:700;color:var(--ink3);text-align:center;margin-bottom:10px;letter-spacing:0.08em}
+.share-btn{
+  width:100%;padding:14px;border:none;border-radius:12px;
+  font-family:'Noto Sans JP',sans-serif;font-size:14px;
+  font-weight:700;cursor:pointer;transition:all 0.2s;
+  margin-bottom:8px;display:flex;align-items:center;
+  justify-content:center;gap:8px;
+}
+.share-line{background:#06C755;color:white;box-shadow:0 4px 12px rgba(6,199,85,0.3)}
+.share-line:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(6,199,85,0.4)}
+.share-copy{background:white;border:2px solid var(--border);color:var(--ink2)}
+.share-copy:hover{border-color:var(--r);color:var(--r)}
+.share-copy.copied{background:var(--g);border-color:var(--g);color:white}
+
+/* 保護者セクション */
+.parent-card{
+  background:linear-gradient(135deg,#FFF7ED,#FFFBEB);
+  border:2px solid #FED7AA;border-radius:18px;
+  padding:1.5rem;margin-bottom:1rem;
+}
+.parent-title{
+  font-family:'Yomogi',cursive;font-size:16px;
+  color:#EA580C;margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.parent-text{font-size:13px;color:var(--ink2);line-height:1.8;margin-bottom:1rem}
+.parent-link{
+  display:block;text-align:center;padding:10px;
+  background:#EA580C;color:white;border-radius:10px;
+  font-size:13px;font-weight:700;text-decoration:none;
+  transition:all 0.2s;
+}
+.parent-link:hover{background:#C2410C;transform:translateY(-1px)}
+
+/* MANABI誘導 */
+.manabi-card{
+  background:linear-gradient(135deg,#F0FDF4,#ECFDF5);
+  border:2px solid #86EFAC;border-radius:18px;
+  padding:1.5rem;margin-bottom:1rem;
+}
+.manabi-title{
+  font-family:'Yomogi',cursive;font-size:16px;
+  color:#16A34A;margin-bottom:8px;
+}
+.manabi-text{font-size:13px;color:var(--ink2);line-height:1.8;margin-bottom:1rem}
+.manabi-link{
+  display:block;text-align:center;padding:10px;
+  background:#16A34A;color:white;border-radius:10px;
+  font-size:13px;font-weight:700;text-decoration:none;
+  transition:all 0.2s;
+}
+.manabi-link:hover{background:#15803D;transform:translateY(-1px)}
+
+/* 免責文 */
+.disclaimer{
+  background:white;border:2px solid var(--border);
+  border-radius:14px;padding:1.25rem;margin-bottom:1rem;
+  font-size:12px;color:var(--ink3);line-height:1.8;
+}
+.disclaimer strong{display:block;color:var(--ink2);margin-bottom:6px;font-size:13px}
+
+.btn-retry{
+  width:100%;padding:12px;border:2px solid var(--border);
+  border-radius:12px;background:white;color:var(--ink3);
+  font-family:'Noto Sans JP',sans-serif;font-size:13px;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-retry:hover{border-color:var(--r);color:var(--r)}
+
+/* フッター */
+.footer{
+  text-align:center;margin-top:4rem;padding-top:2rem;
+  border-top:2px solid var(--border);
+  font-size:11px;color:var(--ink3);line-height:1.9;
+}
+
+/* アニメーション */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounceIn{0%{opacity:0;transform:scale(0.3)}50%{transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+
+@media(max-width:480px){
+  .card{padding:1.25rem}
+  .result-card{padding:1.5rem}
+  .grade-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ヘッダー -->
+<div class="header" id="header">
+  <div class="aiwa-badge">✦ AIWA 学生向け無料診断</div>
+  <h1>あなたの才能、<br>見つけよう！</h1>
+  <p class="subtitle">
+    「将来何になりたいか分からない」<br>
+    そんな時は、まず自分のタイプを知ることから始めよう。<br>
+    10問に答えるだけで、あなたの強みと向いている仕事が分かるよ！
+  </p>
+  <div class="free-tag">🎁 完全無料・登録不要</div>
+</div>
+
+<!-- ステップバー -->
+<div class="step-bar" id="stepBar">
+  <div class="step-item active" id="s1"><div class="step-circle">1</div><div class="step-label">自己紹介</div></div>
+  <div class="step-conn"></div>
+  <div class="step-item" id="s2"><div class="step-circle">2</div><div class="step-label">診断</div></div>
+  <div class="step-conn"></div>
+  <div class="step-item" id="s3"><div class="step-circle">3</div><div class="step-label">結果</div></div>
+</div>
+
+<!-- プログレスバー -->
+<div class="prog-wrap" id="progWrap">
+  <div class="prog-info">
+    <span id="progLabel">質問 1 / 10</span>
+    <span id="progPct">0%</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<!-- スタート画面 -->
+<div id="startSection">
+  <div class="card">
+    <div class="card-num">まず自己紹介してね！</div>
+    <div class="card-q">ニックネームと学年を教えてください</div>
+    <div style="margin-bottom:1rem">
+      <label style="font-size:12px;color:var(--ink2);display:block;margin-bottom:6px;font-weight:500">ニックネーム（本名じゃなくてOK！）</label>
+      <input type="text" class="nick-input" id="nickInput" placeholder="例：みー・たろ・ゆず など" maxlength="10">
+    </div>
+    <div>
+      <label style="font-size:12px;color:var(--ink2);display:block;margin-bottom:8px;font-weight:500">学年</label>
+      <div class="grade-grid">
+        <button class="grade-btn" onclick="setGrade(this,'中学1年')">中1</button>
+        <button class="grade-btn" onclick="setGrade(this,'中学2年')">中2</button>
+        <button class="grade-btn" onclick="setGrade(this,'中学3年')">中3</button>
+        <button class="grade-btn" onclick="setGrade(this,'高校1年')">高1</button>
+        <button class="grade-btn" onclick="setGrade(this,'高校2年')">高2</button>
+        <button class="grade-btn" onclick="setGrade(this,'高校3年')">高3</button>
+        <button class="grade-btn" onclick="setGrade(this,'大学生・専門学生')" style="grid-column:span 2">大学・専門</button>
+        <button class="grade-btn" onclick="setGrade(this,'その他')">その他</button>
+      </div>
+    </div>
+    <button class="btn-next" id="startBtn" onclick="startQuiz()" disabled>診断スタート！→</button>
+  </div>
+</div>
+
+<!-- 質問エリア -->
+<div id="questionArea" style="display:none"></div>
+
+<!-- ローディング -->
+<div class="loading" id="loading">
+  <span class="loading-emoji">🔮</span>
+  <div class="loading-text" id="loadingText">あなたの才能を分析中...</div>
+</div>
+
+<!-- 結果 -->
+<div class="result" id="result"></div>
+
+<!-- フッター -->
+<div class="footer">
+  <strong style="color:var(--ink2)">AIWA 学生向け才能タイプ診断</strong><br>
+  © 2026 AIWA — AI Multi-Work Alliance｜代表<br>
+  note: <strong style="color:var(--ink2)">AI</strong>（えーあい／あい）｜X: <strong style="color:var(--ink2)">@Ai83wa</strong><br>
+  本ツールの無断転載・再配布を禁止します。
+</div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text:"学校や日常で、自分が一番「得意だな」と感じることは？",
+    choices:[
+      {text:"友達の悩みを聞いて、一緒に考えること",types:["ひとを支える職人型","伝える天才型"]},
+      {text:"なぞなぞや謎解きみたいな問題を考えること",types:["謎解きエキスパート型"]},
+      {text:"絵・音楽・文章など何かを作り出すこと",types:["アイデアの魔法使い型"]},
+      {text:"コツコツ練習・勉強して積み上げること",types:["コツコツ最強型"]},
+    ]
+  },
+  {
+    text:"グループ活動や文化祭のとき、自然とどんな役になる？",
+    choices:[
+      {text:"みんなの意見を聞いてまとめる役",types:["みんなをまとめる司令塔型","ひとを支える職人型"]},
+      {text:"アイデアやデザインを考える役",types:["アイデアの魔法使い型"]},
+      {text:"調べ物や計画を立てる役",types:["謎解きエキスパート型","コツコツ最強型"]},
+      {text:"みんなに分かりやすく説明する役",types:["伝える天才型"]},
+    ]
+  },
+  {
+    text:"どんな勉強のしかたが自分に合ってると思う？",
+    choices:[
+      {text:"教科書や参考書を見ながら覚える（見て覚える）",types:["謎解きエキスパート型","アイデアの魔法使い型"]},
+      {text:"先生の話や音声を聞いて覚える（聞いて覚える）",types:["伝える天才型","ひとを支える職人型"]},
+      {text:"実際にやってみて体で覚える（やって覚える）",types:["コツコツ最強型","みんなをまとめる司令塔型"]},
+      {text:"人に説明しながら覚える（話して覚える）",types:["伝える天才型","みんなをまとめる司令塔型"]},
+    ]
+  },
+  {
+    text:"休み時間、一番やっていることに近いのは？",
+    choices:[
+      {text:"友達と話す・みんなでわいわいする",types:["みんなをまとめる司令塔型","ひとを支える職人型"]},
+      {text:"本・マンガ・ゲーム・音楽など一人で楽しむ",types:["謎解きエキスパート型","アイデアの魔法使い型"]},
+      {text:"何かを作ったり、絵を描いたりする",types:["アイデアの魔法使い型"]},
+      {text:"運動・スポーツ・体を動かす",types:["コツコツ最強型"]},
+    ]
+  },
+  {
+    text:"友達からよく言われることに近いのは？",
+    choices:[
+      {text:"「話を聞いてくれてありがとう」「優しいね」",types:["ひとを支える職人型"]},
+      {text:"「頭いい！」「物知りだね」",types:["謎解きエキスパート型"]},
+      {text:"「発想が面白い！」「センスある」",types:["アイデアの魔法使い型"]},
+      {text:"「頑張り屋だね」「コツコツえらい」",types:["コツコツ最強型"]},
+    ]
+  },
+  {
+    text:"まだ伸びしろがあると思うことは？（これからもっと伸ばせそうなこと）",
+    choices:[
+      {text:"人前で自信を持って話すこと",types:["伝える天才型","みんなをまとめる司令塔型"]},
+      {text:"自分からアイデアを出すこと",types:["アイデアの魔法使い型"]},
+      {text:"計画を立てて物事を進めること",types:["謎解きエキスパート型","コツコツ最強型"]},
+      {text:"みんなをまとめてリードすること",types:["みんなをまとめる司令塔型"]},
+    ]
+  },
+  {
+    text:"どんな仕事のイメージが「楽しそう」と思う？",
+    choices:[
+      {text:"人の役に立つ・助ける仕事",types:["ひとを支える職人型","伝える天才型"]},
+      {text:"調べたり分析したりする仕事",types:["謎解きエキスパート型"]},
+      {text:"作ったり表現したりする仕事",types:["アイデアの魔法使い型"]},
+      {text:"チームを引っ張る・まとめる仕事",types:["みんなをまとめる司令塔型"]},
+    ]
+  },
+  {
+    text:"困っている友達がいたら、どうする？",
+    choices:[
+      {text:"話を最後まで聞いて、気持ちに寄り添う",types:["ひとを支える職人型"]},
+      {text:"解決策を一緒に考えて提案する",types:["謎解きエキスパート型","みんなをまとめる司令塔型"]},
+      {text:"「こんなのどう？」と新しいアイデアを出す",types:["アイデアの魔法使い型"]},
+      {text:"できることを一緒に地道にやる",types:["コツコツ最強型"]},
+    ]
+  },
+  {
+    text:"「これは得意！」と思う科目・活動は？",
+    choices:[
+      {text:"国語・英語・言葉に関すること",types:["伝える天才型","ひとを支える職人型"]},
+      {text:"数学・理科・論理的に考えること",types:["謎解きエキスパート型"]},
+      {text:"美術・音楽・技術など表現すること",types:["アイデアの魔法使い型"]},
+      {text:"体育・部活など体を動かすこと",types:["コツコツ最強型","みんなをまとめる司令塔型"]},
+    ]
+  },
+  {
+    text:"将来の仕事を選ぶとき、一番大事にしたいことは？",
+    choices:[
+      {text:"誰かの役に立てること・感謝されること",types:["ひとを支える職人型","伝える天才型"]},
+      {text:"自分の得意なことや知識を活かせること",types:["謎解きエキスパート型"]},
+      {text:"自分らしさや創造性を発揮できること",types:["アイデアの魔法使い型"]},
+      {text:"コツコツ努力した成果が出ること",types:["コツコツ最強型","みんなをまとめる司令塔型"]},
+    ]
+  }
+];
+
+const typeData={
+  "ひとを支える職人型":{
+    emoji:"🌸",color:"#FF6B6B",borderColor:"#FF6B6B",
+    tagColor:"rgba(255,107,107,0.1)",tagBorder:"#FF6B6B",tagText:"#FF6B6B",
+    desc:"人の気持ちに自然に気づいて、そっと寄り添える才能があるよ。「大丈夫？」って声をかけられる人は、実はとても少ない。その優しさと観察力は、あなただけの大切な強みだよ。",
+    strengths:["傾聴力","共感力","観察力","サポート力","気配り"],
+    studyHint:"人の話を聞きながら覚えたり、グループで学ぶのが合ってるタイプかも。授業中に「なんでかな？」と感じたことをメモしてみよう！",
+    jobs:"看護師・保育士・介護士・カウンセラー・ソーシャルワーカー・教師・接客業",
+    message:"あなたの「気にかける力」は、誰かの人生を変える力を持っているよ。焦らなくていい。あなたのペースで、大切なものを見つけていこう🌸"
+  },
+  "謎解きエキスパート型":{
+    emoji:"🔍",color:"#45B7D1",borderColor:"#45B7D1",
+    tagColor:"rgba(69,183,209,0.1)",tagBorder:"#45B7D1",tagText:"#45B7D1",
+    desc:"「なぜ？」「どうして？」と考えることが好きで、物事の仕組みを理解するのが得意なタイプ。データや情報を整理して、答えを導き出すのがうまいよ。論理的に考える力が武器！",
+    strengths:["論理的思考","分析力","集中力","問題解決力","正確性"],
+    studyHint:"教科書をじっくり読んだり、図や表を使って整理すると理解が深まるよ。「なぜそうなるの？」を大切にして学ぼう！",
+    jobs:"エンジニア・科学者・研究者・医師・薬剤師・会計士・データアナリスト",
+    message:"「答えを知りたい」という気持ちがあるかぎり、あなたの可能性は無限大。その探求心は、将来きっと大きな武器になるよ🔍"
+  },
+  "アイデアの魔法使い型":{
+    emoji:"✨",color:"#C084FC",borderColor:"#C084FC",
+    tagColor:"rgba(192,132,252,0.1)",tagBorder:"#C084FC",tagText:"#C084FC",
+    desc:"「こんなのあったら面白いのに！」というアイデアが次々と浮かんでくるタイプ。絵・音楽・文章・デザインなど、何かを表現することが好きで、人とは違う視点で物事を見られるのが才能だよ！",
+    strengths:["発想力","創造力","表現力","センス","柔軟な思考"],
+    studyHint:"絵や図で内容を整理したり、自分なりにまとめノートを作ると覚えやすいかも。音楽を聴きながら勉強が合う人も多いよ！",
+    jobs:"デザイナー・イラストレーター・作家・ゲームクリエイター・音楽家・建築家・広告クリエイター",
+    message:"「ちょっと変なアイデア」こそが、世界を面白くする力を持っている。あなたの発想は誰にも真似できない宝物だよ✨"
+  },
+  "コツコツ最強型":{
+    emoji:"⚡",color:"#4ECDC4",borderColor:"#4ECDC4",
+    tagColor:"rgba(78,205,196,0.1)",tagBorder:"#4ECDC4",tagText:"#4ECDC4",
+    desc:"「決めたことをちゃんとやり遂げる」力がずば抜けているタイプ。地道な練習や勉強を続けられる忍耐力と、正確にこなす力が強み。「継続は力なり」を体で知っている人だよ！",
+    strengths:["継続力","正確性","忍耐力","計画力","実行力"],
+    studyHint:"毎日少しずつ積み上げる勉強法が一番合ってるよ。スケジュールを立てて、一つずつクリアしていくのが得意なはず！",
+    jobs:"スポーツ選手・職人・プログラマー・医療技術者・会計士・料理人・研究者",
+    message:"コツコツ続けられるあなたは、実はとても希少な存在。焦らなくていい。あなたのペースで積み上げてきたものは、誰にも崩せない土台になるよ⚡"
+  },
+  "伝える天才型":{
+    emoji:"📚",color:"#FFB347",borderColor:"#FFB347",
+    tagColor:"rgba(255,179,71,0.1)",tagBorder:"#FFB347",tagText:"#C8720A",
+    desc:"「分かりやすく伝える」ことが自然にできるタイプ。相手に合わせて説明を変えたり、複雑なことをシンプルにまとめたりするのが得意。話すことも書くことも、コミュニケーション全般が武器だよ！",
+    strengths:["説明力","表現力","コミュニケーション力","共感力","言語センス"],
+    studyHint:"人に説明しながら覚える方法が一番合ってるよ。友達に教えてみたり、声に出して読んでみよう！",
+    jobs:"教師・アナウンサー・ライター・YouTuber・医療従事者・営業職・通訳・コーチ",
+    message:"「伝わった！」という瞬間を大切にしよう。あなたの言葉には、人の心を動かす力がある。その才能を磨いていこう📚"
+  },
+  "みんなをまとめる司令塔型":{
+    emoji:"🌐",color:"#96CEB4",borderColor:"#96CEB4",
+    tagColor:"rgba(150,206,180,0.1)",tagBorder:"#96CEB4",tagText:"#2D8C5C",
+    desc:"全体を見渡して、みんながうまく動けるように調整できる才能があるよ。「誰が何をすればいいか」を自然に考えられて、チームをまとめる力がある。リーダーとしての素質たっぷり！",
+    strengths:["統率力","俯瞰力","調整力","判断力","リーダーシップ"],
+    studyHint:"グループ学習や討論が合ってるタイプ。全体の流れを整理してから細かい部分を学ぶと頭に入りやすいよ！",
+    jobs:"経営者・プロデューサー・政治家・スポーツ監督・プロジェクトマネージャー・公務員",
+    message:"あなたの「全体を見る目」は、チームを勝利に導く力を持っている。その自然なリーダーシップを、もっと信じていいよ🌐"
+  }
+};
+
+let currentQ=0;let scores={};let answers=[];let nickname='';let grade='';
+Object.keys(typeData).forEach(t=>scores[t]=0);
+
+function setGrade(btn,g){
+  grade=g;
+  document.querySelectorAll('.grade-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  checkStart();
+}
+
+function checkStart(){
+  const nick=document.getElementById('nickInput').value.trim();
+  document.getElementById('startBtn').disabled=!(nick&&grade);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('nickInput').addEventListener('input',()=>{
+    nickname=document.getElementById('nickInput').value.trim();
+    checkStart();
+  });
+});
+
+function startQuiz(){
+  nickname=document.getElementById('nickInput').value.trim();
+  document.getElementById('startSection').style.display='none';
+  document.getElementById('progWrap').style.display='block';
+  setStep(2);
+  showQuestion();
+  setTimeout(()=>{
+    const area=document.getElementById('questionArea');
+    if(area){
+      const top=area.getBoundingClientRect().top+window.scrollY-20;
+      window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+    }
+  },100);
+}
+
+function setStep(n){
+  ['s1','s2','s3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.className='step-item';
+    if(i+1<n)el.classList.add('done');
+    else if(i+1===n)el.classList.add('active');
+  });
+}
+
+function showQuestion(){
+  const q=questions[currentQ];
+  const pct=Math.round((currentQ/questions.length)*100);
+  document.getElementById('progLabel').textContent=`質問 ${currentQ+1} / ${questions.length}`;
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('progFill').style.width=pct+'%';
+
+  const letters=['A','B','C','D'];
+  const choicesHTML=q.choices.map((c,i)=>`
+    <button class="choice ${answers[currentQ]===i?'sel':''}" onclick="selectChoice(${i})">
+      <span class="choice-icon">${letters[i]}</span>
+      <span>${c.text}</span>
+    </button>
+  `).join('');
+
+  const area=document.getElementById('questionArea');
+  area.style.display='block';
+  area.innerHTML=`
+    <div class="card">
+      <div class="card-num">Question ${currentQ+1}</div>
+      <div class="card-q">${q.text}</div>
+      <div class="choices">${choicesHTML}</div>
+      ${currentQ>0?`<button class="btn-back" onclick="goBack()">← 前の質問に戻る</button>`:''}
+      <button class="btn-next" id="nextBtn" onclick="nextQ()" ${answers[currentQ]===undefined?'disabled':''}>
+        ${currentQ<questions.length-1?'次の質問 →':'結果を見る ✨'}
+      </button>
+    </div>
+  `;
+}
+
+function selectChoice(idx){
+  answers[currentQ]=idx;
+  document.querySelectorAll('.choice').forEach((el,i)=>el.classList.toggle('sel',i===idx));
+  document.getElementById('nextBtn').disabled=false;
+}
+
+function nextQ(){
+  const choice=questions[currentQ].choices[answers[currentQ]];
+  choice.types.forEach(t=>scores[t]=(scores[t]||0)+1);
+  if(currentQ<questions.length-1){
+    currentQ++;showQuestion();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }else{showLoading();}
+}
+
+function goBack(){
+  const prev=questions[currentQ].choices[answers[currentQ]];
+  if(prev)prev.types.forEach(t=>scores[t]=Math.max(0,(scores[t]||0)-1));
+  currentQ--;showQuestion();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const loadMsgs=['あなたの才能を分析中...','強みのパターンを読み取り中...','向いている仕事を検索中...','あなただけの結果を生成中...'];
+
+function showLoading(){
+  document.getElementById('questionArea').style.display='none';
+  document.getElementById('progWrap').style.display='none';
+  document.getElementById('header').style.display='none';
+  const l=document.getElementById('loading');
+  l.style.display='block';
+  let i=0;
+  const iv=setInterval(()=>{
+    i=(i+1)%loadMsgs.length;
+    document.getElementById('loadingText').textContent=loadMsgs[i];
+  },800);
+  setTimeout(()=>{clearInterval(iv);showResult();},3200);
+}
+
+function showResult(){
+  const top=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const d=typeData[top];
+  document.getElementById('loading').style.display='none';
+  setStep(3);
+
+  const shareText=`【AIWA才能タイプ診断】\n${nickname}は「${top}」だった！\n${d.emoji}\n\nあなたも試してみて👇\nhttps://note.com/ai_83_wa\n\n#AIWA診断 #才能タイプ #${top.replace(/型$/,'')}`;
+
+  const resultHTML=`
+    <div class="result-card" style="border-color:${d.borderColor}">
+      <div class="result-ribbon"></div>
+      <div class="result-nick">${nickname}（${grade}）の診断結果</div>
+      <span class="result-emoji">${d.emoji}</span>
+      <div class="result-type-label" style="color:${d.color}">あなたのタイプは</div>
+      <div class="result-type-name" style="color:${d.color}">${top}</div>
+      <p class="result-desc">${d.desc}</p>
+      <div class="tags">
+        ${d.strengths.map(s=>`<span class="tag" style="background:${d.tagColor};border-color:${d.tagBorder};color:${d.tagText}">${s}</span>`).join('')}
+      </div>
+      <div class="section study-style">
+        <div class="section-label study-label">📖 あなたの学習スタイルのヒント</div>
+        <div class="section-text">${d.studyHint}</div>
+      </div>
+      <div class="section jobs">
+        <div class="section-label jobs-label">💼 向いている仕事・職業</div>
+        <div class="section-text">${d.jobs}</div>
+      </div>
+      <div class="section message">
+        <div class="section-label message-label">✉ あなたへのメッセージ</div>
+        <div class="message-text">${d.message}</div>
+      </div>
+
+      <div class="share-section">
+        <div class="share-title">📲 友達にもシェアしよう！</div>
+        <button class="share-btn share-line" onclick="shareLINE('${encodeURIComponent(shareText)}')">
+          💬 LINEで友達に送る
+        </button>
+        <button class="share-btn share-copy" id="copyShareBtn" onclick="copyShare(\`${shareText.replace(/`/g,'\\`')}\`)">
+          📋 結果をコピーしてシェア
+        </button>
+      </div>
+    </div>
+
+    <div class="parent-card">
+      <div class="parent-title">👨‍👩‍👧 お父さん・お母さんへ</div>
+      <div class="parent-text">
+        お子さんの診断結果はいかがでしたか？<br>
+        「${top}」のお子さんには、<strong>${d.strengths[0]}・${d.strengths[1]}</strong>という強みがあります。<br><br>
+        「すごいね」「向いてるね」という声かけが、お子さんの自信につながります。<br>
+        大人向けのAI活用ツールも無料・有料で提供しています。
+      </div>
+      <a href="https://note.com/ai_83_wa" target="_blank" class="parent-link">
+        大人向けのAIWAツールを見てみる →
+      </a>
+    </div>
+
+    <div class="manabi-card">
+      <div class="manabi-title">📚 もっと強みを伸ばしたいなら</div>
+      <div class="manabi-text">
+        AI学習支援ツール「MANABI」では、あなたの強みを活かした学び方で勉強をサポートします。準備中ですが、気になる方はXでフォローしてね！
+      </div>
+      <a href="https://x.com/Ai83wa" target="_blank" class="manabi-link">
+        X（@Ai83wa）をフォローして最新情報を受け取る →
+      </a>
+    </div>
+
+    <div class="disclaimer">
+      <strong>📋 大切なお知らせ</strong>
+      この診断は「考えるきっかけ」として作られたものです。結果が全てではありません。「なんか違うな」と思ったら、それも大切なサインです。<br><br>
+      最終的な進路・仕事選びは、<strong>①自分が本当に興味を持てるか ②信頼できる先生・親・大人に相談する ③実際に体験してみる</strong>、この3つを大切にしてください🙏<br><br>
+      あなたの未来は、あなたが決めます。
+    </div>
+
+    <button class="btn-retry" onclick="retryQuiz()">← もう一度診断する</button>
+  `;
+
+  const r=document.getElementById('result');
+  r.style.display='block';
+  r.innerHTML=resultHTML;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function shareLINE(text){
+  window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent('https://note.com/ai_83_wa')}&text=${text}`,'_blank');
+}
+
+function copyShare(text){
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copyShareBtn');
+    btn.textContent='✓ コピーしました！LINEに貼り付けてね';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 結果をコピーしてシェア';btn.classList.remove('copied');},3000);
+  });
+}
+
+function retryQuiz(){
+  currentQ=0;answers=[];
+  Object.keys(scores).forEach(t=>scores[t]=0);
+  nickname='';grade='';
+  document.getElementById('result').style.display='none';
+  document.getElementById('loading').style.display='none';
+  document.getElementById('header').style.display='block';
+  document.getElementById('startSection').style.display='block';
+  document.getElementById('progWrap').style.display='none';
+  document.getElementById('nickInput').value='';
+  document.querySelectorAll('.grade-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('startBtn').disabled=true;
+  setStep(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

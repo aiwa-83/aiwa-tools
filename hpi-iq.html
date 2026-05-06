@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIWA 性格×思考スタイル総合診断</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C0C18;--surface:#13131F;--surface2:#1A1A2E;
+  --border:#252540;--border2:#333360;
+  --text:#EEE8FF;--text2:#9B94C0;--text3:#5A5480;
+  --gold:#D4AF37;--gold2:#F0D060;--gold-light:rgba(212,175,55,0.12);
+  --silver:#C0C0D0;--silver2:#E8E8F0;
+  --rose:#E8A0A0;--rose2:#FFD0D0;
+  --teal:#60C0B0;--teal2:#A0E8D8;
+  --violet:#A080E0;--violet2:#D0B8FF;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --shadow-gold:0 0 30px rgba(212,175,55,0.2);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* 背景 */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 20%,rgba(212,175,55,0.06) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(160,128,224,0.06) 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 50%,rgba(96,192,176,0.04) 0%,transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* 星 */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;border-radius:50%;background:white;animation:twinkle var(--d,3s) infinite var(--delay,0s)}
+@keyframes twinkle{0%,100%{opacity:var(--min,0.1)}50%{opacity:var(--max,0.6)}}
+
+.wrap{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:2.5rem 1.25rem 6rem}
+
+/* ヘッダー */
+.header{text-align:center;margin-bottom:3rem;animation:fadeUp 1s ease both}
+
+.crown{font-size:36px;display:block;margin-bottom:0.75rem;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(212,175,55,0.15),rgba(212,175,55,0.05));
+  border:1px solid rgba(212,175,55,0.4);
+  border-radius:100px;padding:5px 18px;
+  font-size:11px;color:var(--gold);
+  letter-spacing:0.18em;margin-bottom:1.25rem;font-weight:500;
+}
+
+h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.8rem,5vw,3rem);
+  font-weight:700;line-height:1.2;
+  letter-spacing:0.02em;margin-bottom:0.75rem;
+  background:linear-gradient(135deg,var(--gold2),var(--silver2),var(--violet2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.subtitle{font-size:13px;color:var(--text2);line-height:1.8;max-width:480px;margin:0 auto}
+
+/* モード選択 */
+.mode-section{margin-bottom:2rem;animation:fadeUp 1s 0.1s ease both}
+.mode-title{font-size:12px;color:var(--text3);letter-spacing:0.12em;text-align:center;margin-bottom:1rem;text-transform:uppercase}
+
+.mode-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+.mode-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:16px;padding:1.25rem 1rem;text-align:center;
+  cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;
+}
+
+.mode-card::before{
+  content:'';position:absolute;inset:0;opacity:0;
+  transition:opacity 0.3s;
+}
+
+.mode-card.personality::before{background:radial-gradient(ellipse at center,rgba(232,160,160,0.15),transparent)}
+.mode-card.thinking::before{background:radial-gradient(ellipse at center,rgba(96,192,176,0.15),transparent)}
+.mode-card.full::before{background:radial-gradient(ellipse at center,rgba(212,175,55,0.15),transparent)}
+
+.mode-card:hover::before,.mode-card.sel::before{opacity:1}
+
+.mode-card.sel.personality{border-color:var(--rose);box-shadow:0 0 20px rgba(232,160,160,0.2)}
+.mode-card.sel.thinking{border-color:var(--teal);box-shadow:0 0 20px rgba(96,192,176,0.2)}
+.mode-card.sel.full{border-color:var(--gold);box-shadow:var(--shadow-gold)}
+
+.mode-icon{font-size:28px;display:block;margin-bottom:8px}
+.mode-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+.mode-desc{font-size:10px;color:var(--text3);line-height:1.5}
+.mode-q{font-size:10px;color:var(--text2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+
+.mode-card.sel .mode-name{color:var(--gold)}
+
+/* プログレス */
+.prog-wrap{margin-bottom:1.5rem;display:none;animation:fadeUp 0.6s ease both}
+.prog-info{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:6px}
+.prog-bar{height:3px;background:var(--border);border-radius:100px;overflow:hidden}
+.prog-fill{height:100%;border-radius:100px;transition:width 0.5s ease}
+.prog-personality{background:linear-gradient(90deg,var(--rose),var(--rose2))}
+.prog-thinking{background:linear-gradient(90deg,var(--teal),var(--teal2))}
+.prog-full{background:linear-gradient(90deg,var(--gold),var(--gold2),var(--violet))}
+
+/* 質問カード */
+.q-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:2rem;margin-bottom:1rem;
+  animation:fadeUp 0.5s ease both;position:relative;overflow:hidden;
+}
+
+.q-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0.4;
+}
+
+.q-category{
+  font-size:10px;letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:0.75rem;font-weight:700;
+}
+.cat-p{color:var(--rose)}
+.cat-t{color:var(--teal)}
+
+.q-num{font-size:11px;color:var(--text3);margin-bottom:0.5rem}
+
+.q-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.1rem,3vw,1.4rem);
+  font-weight:600;line-height:1.6;
+  color:var(--text);margin-bottom:1.5rem;
+}
+
+/* 選択肢 */
+.choices{display:flex;flex-direction:column;gap:8px}
+
+.choice{
+  padding:14px 16px;border:1px solid var(--border);
+  border-radius:12px;background:var(--surface2);
+  color:var(--text2);font-size:13px;cursor:pointer;
+  transition:border-color 0.15s,background 0.15s;
+  text-align:left;font-family:'Noto Sans JP',sans-serif;
+  line-height:1.5;display:flex;align-items:center;gap:12px;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;touch-action:manipulation;min-height:52px;
+}
+
+.choice-dot{
+  width:20px;height:20px;border-radius:50%;
+  border:1.5px solid var(--border2);flex-shrink:0;
+  transition:all 0.15s;display:flex;align-items:center;
+  justify-content:center;
+}
+
+.choice:active{opacity:0.8}
+
+.choice.sel-p{border-color:var(--rose);background:rgba(232,160,160,0.06);color:var(--text)}
+.choice.sel-p .choice-dot{background:var(--rose);border-color:var(--rose)}
+.choice.sel-t{border-color:var(--teal);background:rgba(96,192,176,0.06);color:var(--text)}
+.choice.sel-t .choice-dot{background:var(--teal);border-color:var(--teal)}
+.choice.sel-f{border-color:var(--gold);background:rgba(212,175,55,0.06);color:var(--text)}
+.choice.sel-f .choice-dot{background:var(--gold);border-color:var(--gold)}
+
+/* ナビ */
+.nav{display:flex;gap:8px;margin-top:1.25rem}
+
+.btn-next{
+  flex:1;padding:13px;border:none;border-radius:12px;
+  color:white;font-family:'Noto Sans JP',sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all 0.25s;letter-spacing:0.05em;
+}
+.btn-next-p{background:linear-gradient(135deg,var(--rose),#C07080)}
+.btn-next-t{background:linear-gradient(135deg,var(--teal),#408080)}
+.btn-next-f{background:linear-gradient(135deg,var(--gold),#B8960A)}
+.btn-next:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.3)}
+.btn-next:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none}
+
+.btn-back{
+  padding:13px 18px;border:1px solid var(--border);
+  border-radius:12px;background:transparent;color:var(--text2);
+  font-family:'Noto Sans JP',sans-serif;font-size:13px;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-back:hover{border-color:var(--gold);color:var(--text)}
+
+/* ローディング */
+.loading{display:none;text-align:center;padding:3rem;animation:fadeUp 0.6s ease both}
+
+.loading-ring-wrap{width:64px;height:64px;margin:0 auto 1.5rem;position:relative}
+.loading-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent}
+.lr1{border-top-color:var(--gold);animation:spin 1.2s linear infinite}
+.lr2{inset:8px;border-top-color:var(--violet);animation:spin 0.9s linear infinite reverse}
+.lr3{inset:16px;border-top-color:var(--teal);animation:spin 1.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.loading-text{font-size:13px;color:var(--text2);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* 結果 */
+.result{display:none;animation:fadeUp 0.8s ease both}
+
+.result-header{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:24px;padding:2.5rem;margin-bottom:1rem;
+  text-align:center;position:relative;overflow:hidden;
+}
+
+.result-ribbon{position:absolute;top:0;left:0;right:0;height:3px}
+.ribbon-p{background:linear-gradient(90deg,var(--rose),var(--rose2),var(--rose))}
+.ribbon-t{background:linear-gradient(90deg,var(--teal),var(--teal2),var(--teal))}
+.ribbon-f{background:linear-gradient(90deg,var(--gold),var(--gold2),var(--violet),var(--gold))}
+
+.result-mode-badge{
+  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  margin-bottom:1rem;font-weight:700;
+}
+
+.result-main-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.6rem,4vw,2.4rem);
+  font-weight:700;line-height:1.3;margin-bottom:1.25rem;
+}
+
+.score-bars{margin:1.25rem 0}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.score-label{font-size:11px;color:var(--text2);min-width:72px;text-align:right}
+.score-bar-bg{flex:1;height:6px;background:var(--border);border-radius:100px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:100px;transition:width 1s ease}
+.score-val{font-size:11px;color:var(--text2);min-width:28px}
+
+.result-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:1.25rem;margin-bottom:10px;
+}
+.rs-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.rs-text{font-size:13px;color:var(--text2);line-height:1.8}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:1rem 0}
+.tag{font-size:11px;padding:3px 10px;border-radius:100px;border:1px solid;font-weight:500}
+
+.message-box{
+  background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(160,128,224,0.08));
+  border:1px solid rgba(212,175,55,0.3);
+  border-radius:16px;padding:1.25rem;margin-bottom:10px;
+}
+.mb-label{font-size:10px;color:var(--gold);letter-spacing:0.14em;font-weight:700;margin-bottom:8px;text-transform:uppercase}
+.mb-text{font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.8;color:var(--text)}
+
+/* CTA */
+.cta-section{margin-top:1.5rem;display:flex;flex-direction:column;gap:8px}
+.btn-cta{
+  width:100%;padding:14px;border-radius:12px;
+  font-family:'Noto Sans JP',sans-serif;font-size:14px;
+  font-weight:700;cursor:pointer;transition:all 0.2s;
+  text-decoration:none;display:block;text-align:center;border:none;
+}
+.btn-cta-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1A1000}
+.btn-cta-gold:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,175,55,0.3)}
+.btn-cta-outline{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-cta-outline:hover{border-color:var(--gold);color:var(--gold)}
+
+.disclaimer{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;
+  font-size:11px;color:var(--text3);line-height:1.8;
+}
+.disclaimer strong{color:var(--text2);display:block;margin-bottom:4px}
+
+.btn-retry{
+  width:100%;padding:12px;border:1px solid var(--border);
+  border-radius:12px;background:transparent;color:var(--text3);
+  font-family:'Noto Sans JP',sans-serif;font-size:12px;
+  cursor:pointer;transition:all 0.2s;margin-top:8px;
+}
+.btn-retry:hover{border-color:var(--gold);color:var(--gold)}
+
+/* スタートボタン */
+.btn-start{
+  width:100%;padding:15px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#1A1000;font-family:'Noto Sans JP',sans-serif;
+  font-size:15px;font-weight:700;cursor:pointer;
+  transition:all 0.25s;letter-spacing:0.05em;
+  box-shadow:var(--shadow-gold);margin-top:1.5rem;
+}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(212,175,55,0.35)}
+.btn-start:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* フッター */
+.footer{
+  text-align:center;margin-top:4rem;padding-top:2rem;
+  border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);line-height:1.9;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounceIn{0%{opacity:0;transform:scale(0.5)}60%{transform:scale(1.1)}100%{opacity:1;transform:scale(1)}}
+
+@media(max-width:480px){
+  .mode-grid{grid-template-columns:1fr}
+  .q-card{padding:1.5rem}
+  .result-header{padding:1.75rem}
+  .nav{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- 星 -->
+<div class="stars" id="stars"></div>
+
+<div class="wrap">
+
+<!-- ヘッダー -->
+<div class="header" id="header">
+  <span class="crown">👑</span>
+  <div class="badge">✦ AIWA 総合診断 ✦</div>
+  <h1>性格 × 思考スタイル<br>総合診断</h1>
+  <p class="subtitle">HPIベースの性格分析とIQベースの思考スタイルを組み合わせた、AIWAオリジナルの総合診断です。自己理解を深めるための参考にどうぞ。</p>
+</div>
+
+<!-- モード選択 -->
+<div class="mode-section" id="modeSection">
+  <div class="mode-title">診断モードを選んでください</div>
+  <div class="mode-grid">
+    <div class="mode-card personality" id="mode-p" onclick="selectMode('personality')">
+      <span class="mode-icon">🌹</span>
+      <div class="mode-name">性格タイプ診断</div>
+      <div class="mode-desc">あなたの性格・行動傾向・対人スタイルが分かります</div>
+      <div class="mode-q">15問・約5分</div>
+    </div>
+    <div class="mode-card thinking" id="mode-t" onclick="selectMode('thinking')">
+      <span class="mode-icon">🔬</span>
+      <div class="mode-name">思考スタイル診断</div>
+      <div class="mode-desc">あなたの思考の強み・得意な思考パターンが分かります</div>
+      <div class="mode-q">15問・約5分</div>
+    </div>
+    <div class="mode-card full" id="mode-f" onclick="selectMode('full')">
+      <span class="mode-icon">✨</span>
+      <div class="mode-name">フル総合診断</div>
+      <div class="mode-desc">性格×思考を統合した完全プロフィールが分かります</div>
+      <div class="mode-q">25問・約8分</div>
+    </div>
+  </div>
+  <button class="btn-start" id="startBtn" onclick="startDiagnosis()" disabled>
+    診断をはじめる →
+  </button>
+</div>
+
+<!-- プログレス -->
+<div class="prog-wrap" id="progWrap">
+  <div class="prog-info">
+    <span id="progLabel">質問 1 / 15</span>
+    <span id="progPct">0%</span>
+  </div>
+  <div class="prog-bar">
+    <div class="prog-fill" id="progFill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- 質問エリア -->
+<div id="questionArea" style="display:none"></div>
+
+<!-- ローディング -->
+<div class="loading" id="loading">
+  <div class="loading-ring-wrap">
+    <div class="loading-ring lr1"></div>
+    <div class="loading-ring lr2"></div>
+    <div class="loading-ring lr3"></div>
+  </div>
+  <div class="loading-text" id="loadingText">あなたの性格を分析しています...</div>
+</div>
+
+<!-- 結果 -->
+<div class="result" id="result"></div>
+
+<!-- フッター -->
+<div class="footer">
+  <strong style="color:var(--text2)">AIWA 性格×思考スタイル総合診断</strong><br>
+  本診断は自己理解のための参考ツールです。医療・臨床レベルの診断ではありません。<br><br>
+  © 2026 AIWA — AI Multi-Work Alliance｜代表<br>
+  note: <strong style="color:var(--text2)">AI</strong>｜X: <strong style="color:var(--text2)">@Ai83wa</strong><br>
+  本ツールの無断転載・再配布を禁止します。
+</div>
+
+</div>
+
+<script>
+// 星を生成
+const starsEl=document.getElementById('stars');
+for(let i=0;i<60;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  const size=Math.random()*2+1;
+  s.style.cssText=`
+    width:${size}px;height:${size}px;
+    top:${Math.random()*100}%;left:${Math.random()*100}%;
+    --d:${Math.random()*4+2}s;--delay:${Math.random()*4}s;
+    --min:${Math.random()*0.1};--max:${Math.random()*0.5+0.2};
+  `;
+  starsEl.appendChild(s);
+}
+
+// 性格診断の質問（15問）
+const personalityQs=[
+  {cat:'外向性',text:'初対面の人と話すとき、あなたはどちらに近いですか？',
+    choices:[
+      {text:'自然に話しかけられる・緊張しない',scores:{外向性:3,協調性:1}},
+      {text:'最初は様子を見てから話す',scores:{外向性:1,誠実性:1}},
+      {text:'相手から話しかけてもらう方が楽',scores:{外向性:0,安定性:1}},
+      {text:'できれば一対一の方が話しやすい',scores:{開放性:1,誠実性:1}},
+    ]},
+  {cat:'安定性',text:'予定外のことが起きたとき、どう対応しますか？',
+    choices:[
+      {text:'すぐ気持ちを切り替えて対処できる',scores:{安定性:3,誠実性:1}},
+      {text:'少し焦るが落ち着いて考える',scores:{安定性:2,誠実性:1}},
+      {text:'しばらく動揺するが何とかなる',scores:{安定性:1,開放性:1}},
+      {text:'かなりストレスを感じる',scores:{安定性:0,協調性:1}},
+    ]},
+  {cat:'誠実性',text:'仕事や勉強での自分のスタイルは？',
+    choices:[
+      {text:'計画を立てて、コツコツ進める',scores:{誠実性:3,安定性:1}},
+      {text:'締め切りを意識しながら進める',scores:{誠実性:2,外向性:1}},
+      {text:'気分に乗ったらまとめてやる',scores:{誠実性:1,開放性:1}},
+      {text:'直前に集中してやることが多い',scores:{誠実性:0,外向性:1}},
+    ]},
+  {cat:'協調性',text:'グループで意見が分かれたとき、どうしますか？',
+    choices:[
+      {text:'みんなが納得できる落とし所を探す',scores:{協調性:3,外向性:1}},
+      {text:'自分の意見を穏やかに伝える',scores:{協調性:2,誠実性:1}},
+      {text:'多数決や他の人に任せる',scores:{協調性:1,安定性:1}},
+      {text:'自分が正しいと思うことを主張する',scores:{協調性:0,誠実性:2}},
+    ]},
+  {cat:'開放性',text:'新しいことへの挑戦について、あなたは？',
+    choices:[
+      {text:'未知のことにワクワクする',scores:{開放性:3,外向性:1}},
+      {text:'怖いけど挑戦してみることが多い',scores:{開放性:2,誠実性:1}},
+      {text:'慎重に検討してから決める',scores:{開放性:1,安定性:1}},
+      {text:'なるべく慣れたことの方が安心',scores:{開放性:0,安定性:2}},
+    ]},
+  {cat:'外向性',text:'休日の過ごし方として好きなのは？',
+    choices:[
+      {text:'友人と外出・賑やかな場所へ',scores:{外向性:3,協調性:1}},
+      {text:'少人数でゆっくり過ごす',scores:{外向性:1,安定性:1}},
+      {text:'一人で好きなことをして過ごす',scores:{外向性:0,開放性:1}},
+      {text:'特にこだわりなく、なりゆきで',scores:{外向性:1,協調性:1}},
+    ]},
+  {cat:'安定性',text:'ストレスを感じたとき、どう対処しますか？',
+    choices:[
+      {text:'運動や趣味で発散する',scores:{安定性:3,外向性:1}},
+      {text:'誰かに話を聞いてもらう',scores:{安定性:2,協調性:2}},
+      {text:'一人で落ち着く時間を作る',scores:{安定性:1,誠実性:1}},
+      {text:'しばらく抱え込んでしまう',scores:{安定性:0,誠実性:1}},
+    ]},
+  {cat:'誠実性',text:'約束や締め切りに対するあなたは？',
+    choices:[
+      {text:'必ず守る・遅刻はほぼしない',scores:{誠実性:3,安定性:1}},
+      {text:'できる限り守るよう意識している',scores:{誠実性:2,協調性:1}},
+      {text:'たまに遅れることがある',scores:{誠実性:1,外向性:1}},
+      {text:'ルーズな方だと思う',scores:{誠実性:0,開放性:1}},
+    ]},
+  {cat:'協調性',text:'他人の気持ちに対するあなたは？',
+    choices:[
+      {text:'すぐ察して共感できる',scores:{協調性:3,外向性:1}},
+      {text:'意識すれば気づける',scores:{協調性:2,誠実性:1}},
+      {text:'どちらかというと論理優先',scores:{協調性:1,誠実性:2}},
+      {text:'感情より事実で判断したい',scores:{協調性:0,誠実性:2}},
+    ]},
+  {cat:'開放性',text:'芸術や文化への興味は？',
+    choices:[
+      {text:'音楽・美術・文学など深く好き',scores:{開放性:3,外向性:1}},
+      {text:'興味があるものは楽しめる',scores:{開放性:2,協調性:1}},
+      {text:'あまり興味がない方',scores:{開放性:1,誠実性:1}},
+      {text:'実用的なことの方が好き',scores:{開放性:0,誠実性:2}},
+    ]},
+  {cat:'外向性',text:'リーダーを任されたとき、どう感じますか？',
+    choices:[
+      {text:'積極的に引き受けたい',scores:{外向性:3,誠実性:1}},
+      {text:'不安だけど頑張れる',scores:{外向性:2,誠実性:2}},
+      {text:'できればサポート役がいい',scores:{外向性:1,協調性:2}},
+      {text:'リーダーは苦手',scores:{外向性:0,協調性:1}},
+    ]},
+  {cat:'安定性',text:'批判や否定的な意見を受けたとき？',
+    choices:[
+      {text:'冷静に受け止めて改善する',scores:{安定性:3,誠実性:2}},
+      {text:'少し傷つくが前向きに考える',scores:{安定性:2,開放性:1}},
+      {text:'しばらく引きずることが多い',scores:{安定性:1,協調性:1}},
+      {text:'かなり落ち込む',scores:{安定性:0,協調性:1}},
+    ]},
+  {cat:'誠実性',text:'目標を立てたとき、どこまで達成できますか？',
+    choices:[
+      {text:'ほぼ達成できる・諦めない',scores:{誠実性:3,安定性:2}},
+      {text:'半分以上は達成できる',scores:{誠実性:2,外向性:1}},
+      {text:'途中で挫折することがある',scores:{誠実性:1,開放性:1}},
+      {text:'目標を立てること自体が少ない',scores:{誠実性:0,開放性:1}},
+    ]},
+  {cat:'協調性',text:'チームで成果が出たとき？',
+    choices:[
+      {text:'みんなで喜びたい・功績を分かち合いたい',scores:{協調性:3,外向性:2}},
+      {text:'チームへの感謝を伝える',scores:{協調性:2,誠実性:1}},
+      {text:'自分の貢献も評価してほしい',scores:{協調性:1,誠実性:1}},
+      {text:'個人の成果をしっかり認めてほしい',scores:{協調性:0,誠実性:2}},
+    ]},
+  {cat:'開放性',text:'将来について、あなたのスタンスは？',
+    choices:[
+      {text:'色々な可能性を探りたい',scores:{開放性:3,外向性:1}},
+      {text:'やりたいことに向かって進みたい',scores:{開放性:2,誠実性:2}},
+      {text:'安定した道を選びたい',scores:{開放性:1,安定性:2}},
+      {text:'まだあまり考えていない',scores:{開放性:0,安定性:1}},
+    ]},
+];
+
+// 思考診断の質問（15問）
+const thinkingQs=[
+  {cat:'論理思考',text:'問題を解決するとき、最初にやることは？',
+    choices:[
+      {text:'原因を分析して仮説を立てる',scores:{論理:3,分析:2}},
+      {text:'過去の似た経験から考える',scores:{言語:2,論理:1}},
+      {text:'全体像をイメージしてから考える',scores:{空間:3,創造:1}},
+      {text:'とりあえず動いてみる',scores:{創造:2,数値:1}},
+    ]},
+  {cat:'言語思考',text:'考えをまとめるとき、どの方法が合っている？',
+    choices:[
+      {text:'文章や言葉で書き出す',scores:{言語:3,論理:1}},
+      {text:'数字や表で整理する',scores:{数値:3,論理:1}},
+      {text:'図や絵で描いてみる',scores:{空間:3,創造:1}},
+      {text:'誰かに話しながら整理する',scores:{言語:2,創造:1}},
+    ]},
+  {cat:'空間思考',text:'地図を読むのは得意ですか？',
+    choices:[
+      {text:'かなり得意・迷わない',scores:{空間:3,論理:1}},
+      {text:'地図があれば大丈夫',scores:{空間:2,分析:1}},
+      {text:'少し苦手',scores:{空間:1,言語:1}},
+      {text:'かなり苦手・よく迷う',scores:{空間:0,言語:2}},
+    ]},
+  {cat:'数値思考',text:'数字・データを見たとき？',
+    choices:[
+      {text:'パターンや法則を探したくなる',scores:{数値:3,論理:2}},
+      {text:'グラフにして視覚化したい',scores:{数値:2,空間:2}},
+      {text:'必要なら使える程度',scores:{数値:1,言語:1}},
+      {text:'苦手・できれば避けたい',scores:{数値:0,言語:2}},
+    ]},
+  {cat:'創造思考',text:'アイデアを出すとき？',
+    choices:[
+      {text:'次々とアイデアが浮かぶ',scores:{創造:3,開放:2}},
+      {text:'既存を組み合わせて考える',scores:{創造:2,論理:1}},
+      {text:'じっくり考えると出てくる',scores:{創造:1,分析:2}},
+      {text:'アイデアを出すのが苦手',scores:{創造:0,論理:2}},
+    ]},
+  {cat:'論理思考',text:'議論するとき、あなたは？',
+    choices:[
+      {text:'根拠・データを重視して話す',scores:{論理:3,数値:1}},
+      {text:'相手の立場に立って考える',scores:{言語:2,分析:1}},
+      {text:'直感的に「これが正しい」と感じる',scores:{創造:2,空間:1}},
+      {text:'なるべく議論を避けたい',scores:{言語:1,分析:1}},
+    ]},
+  {cat:'分析思考',text:'複雑な情報を整理するのは？',
+    choices:[
+      {text:'得意・むしろ好き',scores:{分析:3,論理:2}},
+      {text:'できるが時間がかかる',scores:{分析:2,数値:1}},
+      {text:'苦手だが何とかなる',scores:{分析:1,創造:1}},
+      {text:'かなり苦手',scores:{分析:0,言語:2}},
+    ]},
+  {cat:'言語思考',text:'読書や文章を読むことは？',
+    choices:[
+      {text:'大好き・よく読む',scores:{言語:3,創造:1}},
+      {text:'必要なものは読める',scores:{言語:2,論理:1}},
+      {text:'あまり得意じゃない',scores:{言語:1,空間:1}},
+      {text:'できれば避けたい',scores:{言語:0,数値:2}},
+    ]},
+  {cat:'空間思考',text:'立体的なものを頭の中で回転させるのは？',
+    choices:[
+      {text:'簡単にできる',scores:{空間:3,論理:1}},
+      {text:'なんとかできる',scores:{空間:2,分析:1}},
+      {text:'難しい',scores:{空間:1,言語:2}},
+      {text:'全くイメージできない',scores:{空間:0,言語:2}},
+    ]},
+  {cat:'数値思考',text:'日常の計算や数学的な問題は？',
+    choices:[
+      {text:'得意・好き',scores:{数値:3,論理:2}},
+      {text:'まあまあできる',scores:{数値:2,分析:1}},
+      {text:'苦手だが日常は大丈夫',scores:{数値:1,言語:1}},
+      {text:'かなり苦手',scores:{数値:0,言語:2}},
+    ]},
+  {cat:'創造思考',text:'既存のルールや常識について？',
+    choices:[
+      {text:'「もっといい方法があるのでは」と考える',scores:{創造:3,開放:2}},
+      {text:'改善できるなら変えていい',scores:{創造:2,論理:1}},
+      {text:'理由があれば従う',scores:{創造:1,分析:1}},
+      {text:'ルールは守るべき',scores:{創造:0,論理:2}},
+    ]},
+  {cat:'分析思考',text:'何かを決めるとき？',
+    choices:[
+      {text:'情報を集めて徹底的に分析してから',scores:{分析:3,論理:2}},
+      {text:'ある程度調べてから判断',scores:{分析:2,数値:1}},
+      {text:'直感と情報を半々で',scores:{分析:1,創造:2}},
+      {text:'直感を信じる',scores:{分析:0,創造:3}},
+    ]},
+  {cat:'論理思考',text:'物事の「なぜ？」を追求するのは？',
+    choices:[
+      {text:'大好き・徹底的に考える',scores:{論理:3,分析:2}},
+      {text:'気になったら調べる',scores:{論理:2,言語:1}},
+      {text:'ある程度で満足',scores:{論理:1,創造:1}},
+      {text:'答えが出ればいい',scores:{論理:0,数値:1}},
+    ]},
+  {cat:'言語思考',text:'人に何かを伝えるとき？',
+    choices:[
+      {text:'言葉を丁寧に選んで話す',scores:{言語:3,分析:1}},
+      {text:'要点を絞って伝える',scores:{言語:2,論理:2}},
+      {text:'図や例え話を使う',scores:{言語:1,空間:2}},
+      {text:'伝えるのが苦手',scores:{言語:0,分析:1}},
+    ]},
+  {cat:'創造思考',text:'新しいアイデアを思いつくのは？',
+    choices:[
+      {text:'日常的によくある',scores:{創造:3,開放:2}},
+      {text:'考えれば出てくる',scores:{創造:2,論理:1}},
+      {text:'あまり得意じゃない',scores:{創造:1,分析:1}},
+      {text:'ほとんどない',scores:{創造:0,論理:2}},
+    ]},
+];
+
+let selectedMode='';
+let currentQ=0;
+let answers=[];
+let pScores={外向性:0,安定性:0,誠実性:0,協調性:0,開放性:0};
+let tScores={論理:0,言語:0,空間:0,数値:0,創造:0,分析:0,開放:0};
+let questions=[];
+
+function selectMode(mode){
+  selectedMode=mode;
+  ['p','t','f'].forEach(m=>{
+    document.getElementById('mode-'+m).classList.remove('sel');
+  });
+  document.getElementById('mode-'+mode[0]).classList.add('sel');
+  document.getElementById('startBtn').disabled=false;
+
+  if(mode==='personality') questions=[...personalityQs];
+  else if(mode==='thinking') questions=[...thinkingQs];
+  else questions=[...personalityQs.slice(0,13),...thinkingQs.slice(0,12)];
+}
+
+function startDiagnosis(){
+  document.getElementById('modeSection').style.display='none';
+  document.getElementById('header').style.display='none';
+  document.getElementById('progWrap').style.display='block';
+
+  const fill=document.getElementById('progFill');
+  if(selectedMode==='personality') fill.className='prog-fill prog-personality';
+  else if(selectedMode==='thinking') fill.className='prog-fill prog-thinking';
+  else fill.className='prog-fill prog-full';
+
+  showQuestion();
+}
+
+function showQuestion(){
+  const q=questions[currentQ];
+  const total=questions.length;
+  const pct=Math.round((currentQ/total)*100);
+
+  document.getElementById('progLabel').textContent=`質問 ${currentQ+1} / ${total}`;
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('progFill').style.width=pct+'%';
+
+  const isP=q.cat==='外向性'||q.cat==='安定性'||q.cat==='誠実性'||q.cat==='協調性'||q.cat==='開放性';
+  const selClass=isP?'sel-p':selectedMode==='thinking'?'sel-t':'sel-f';
+  const catClass=isP?'cat-p':'cat-t';
+
+  const area=document.getElementById('questionArea');
+  area.style.display='block';
+
+  const choicesHTML=q.choices.map((c,i)=>`
+    <button class="choice ${answers[currentQ]===i?selClass:''}"
+      onclick="selectChoice(${i},'${selClass}')"
+      style="touch-action:manipulation">
+      <span class="choice-dot"></span>
+      <span>${c.text}</span>
+    </button>
+  `).join('');
+
+  const btnClass=isP?'btn-next-p':selectedMode==='thinking'?'btn-next-t':'btn-next-f';
+
+  area.innerHTML=`
+    <div class="q-card">
+      <div class="q-category ${catClass}">${q.cat}</div>
+      <div class="q-num">Q${currentQ+1} / ${total}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="choices">${choicesHTML}</div>
+      <div class="nav">
+        ${currentQ>0?`<button class="btn-back" onclick="goBack()">← 戻る</button>`:''}
+        <button class="btn-next ${btnClass}" id="nextBtn"
+          onclick="nextQ()"
+          ${answers[currentQ]===undefined?'disabled':''}>
+          ${currentQ<questions.length-1?'次へ →':'結果を見る ✨'}
+        </button>
+      </div>
+    </div>
+  `;
+
+  setTimeout(()=>{
+    const a=document.getElementById('questionArea');
+    if(a){const top=a.getBoundingClientRect().top+window.scrollY-20;
+      window.scrollTo({top:Math.max(0,top),behavior:'smooth'});}
+  },50);
+}
+
+function selectChoice(idx,selClass){
+  answers[currentQ]=idx;
+  document.querySelectorAll('.choice').forEach((el,i)=>{
+    el.className='choice'+(i===idx?' '+selClass:'');
+  });
+  document.getElementById('nextBtn').disabled=false;
+}
+
+function nextQ(){
+  const choice=questions[currentQ].choices[answers[currentQ]];
+  // スコア加算
+  if(choice.scores){
+    Object.entries(choice.scores).forEach(([k,v])=>{
+      if(k in pScores) pScores[k]+=v;
+      else if(k in tScores) tScores[k]+=v;
+    });
+  }
+
+  if(currentQ<questions.length-1){
+    currentQ++;
+    showQuestion();
+  }else{
+    showLoading();
+  }
+}
+
+function goBack(){
+  // 前の質問のスコアを戻す
+  const prev=questions[currentQ].choices[answers[currentQ]];
+  if(prev&&prev.scores){
+    Object.entries(prev.scores).forEach(([k,v])=>{
+      if(k in pScores) pScores[k]=Math.max(0,pScores[k]-v);
+      else if(k in tScores) tScores[k]=Math.max(0,tScores[k]-v);
+    });
+  }
+  currentQ--;
+  showQuestion();
+}
+
+const loadMsgs=[
+  'あなたの性格を分析しています...',
+  '思考パターンを読み取っています...',
+  '強みの輪郭を描いています...',
+  'あなただけのプロフィールを生成中...'
+];
+
+function showLoading(){
+  document.getElementById('questionArea').style.display='none';
+  document.getElementById('progWrap').style.display='none';
+  document.getElementById('loading').style.display='block';
+  let i=0;
+  const iv=setInterval(()=>{
+    i=(i+1)%loadMsgs.length;
+    document.getElementById('loadingText').textContent=loadMsgs[i];
+  },900);
+  setTimeout(()=>{clearInterval(iv);showResult();},3600);
+}
+
+// 性格タイプの判定
+function getPersonalityType(){
+  const max=Object.entries(pScores).sort((a,b)=>b[1]-a[1]);
+  const top=max[0][0];
+  const second=max[1][0];
+
+  const types={
+    外向性:{name:'社交的リーダータイプ',desc:'人と関わることでエネルギーが湧いてくるタイプ。場の雰囲気を作るのが得意で、自然とリーダーシップを発揮します。人を巻き込む力が強みです。',color:'var(--rose)',tags:['社交性','リーダーシップ','行動力','表現力']},
+    安定性:{name:'冷静な安定タイプ',desc:'どんな状況でも感情に流されず冷静に対処できるタイプ。ストレス耐性が高く、周りの人の安心感の柱になれます。信頼される存在です。',color:'var(--teal)',tags:['安定感','冷静さ','信頼性','忍耐力']},
+    誠実性:{name:'堅実な実行タイプ',desc:'約束を守り、計画通りに物事を進める力があります。コツコツ積み上げる誠実さが最大の強み。周りから信頼され、長期的な成果を出せるタイプです。',color:'var(--gold)',tags:['誠実さ','計画力','実行力','信頼性']},
+    協調性:{name:'共感の調和タイプ',desc:'人の気持ちに敏感で、チームの和を大切にするタイプ。相手の立場に立って考える力があり、人間関係を円滑にする調整役として輝きます。',color:'var(--violet)',tags:['共感力','協調性','調整力','思いやり']},
+    開放性:{name:'好奇心旺盛な探求タイプ',desc:'新しいことへの好奇心が強く、変化を楽しめるタイプ。固定観念にとらわれない柔軟な発想と、多様な経験への意欲が強みです。',color:'var(--silver)',tags:['好奇心','創造性','柔軟性','探求心']},
+  };
+  return types[top];
+}
+
+// 思考タイプの判定
+function getThinkingType(){
+  const max=Object.entries(tScores).filter(([k])=>k!=='開放').sort((a,b)=>b[1]-a[1]);
+  const top=max[0][0];
+
+  const types={
+    論理:{name:'論理的思考者',desc:'物事を筋道立てて考え、矛盾を見つける力が突出しています。感情より根拠を重視し、複雑な問題を整理して解決策を導き出せます。',color:'var(--teal)',tags:['論理力','分析力','問題解決','批判的思考']},
+    言語:{name:'言語的思考者',desc:'言葉の力で考え、表現する能力に長けています。読む・書く・話す全般が得意で、複雑な概念を分かりやすく伝えることができます。',color:'var(--rose)',tags:['言語力','表現力','説明力','読解力']},
+    空間:{name:'空間的思考者',desc:'頭の中で立体的にイメージできる力があります。地図・設計・デザインなど視覚的な情報処理が得意で、全体の構造を直感的に把握できます。',color:'var(--violet)',tags:['空間認識','視覚思考','構造把握','直感力']},
+    数値:{name:'数値的思考者',desc:'数字やデータから法則を見つける力が高いタイプ。統計・会計・プログラミングなど、正確さと論理が求められる分野で本領を発揮します。',color:'var(--gold)',tags:['数値処理','パターン認識','正確性','データ思考']},
+    創造:{name:'創造的思考者',desc:'既存の枠を超えて新しいアイデアを生み出す力があります。独自の視点と発想力で、誰も思いつかなかった解決策や表現を作り出せます。',color:'var(--rose2)',tags:['創造力','発想力','独自性','革新性']},
+    分析:{name:'分析的思考者',desc:'情報を細かく分解して本質を見抜く力があります。複雑なデータや状況を丁寧に整理し、見落としを防ぎながら深く理解できます。',color:'var(--silver)',tags:['分析力','洞察力','細部への注意','深掘り力']},
+  };
+  return types[top]||types['論理'];
+}
+
+function showResult(){
+  document.getElementById('loading').style.display='none';
+
+  const pType=getPersonalityType();
+  const tType=getThinkingType();
+
+  let html='';
+
+  if(selectedMode==='personality'){
+    html=buildPersonalityResult(pType);
+  }else if(selectedMode==='thinking'){
+    html=buildThinkingResult(tType);
+  }else{
+    html=buildFullResult(pType,tType);
+  }
+
+  const r=document.getElementById('result');
+  r.style.display='block';
+  r.innerHTML=html;
+
+  // スコアバーのアニメーション
+  setTimeout(()=>{
+    document.querySelectorAll('.score-bar-fill[data-width]').forEach(el=>{
+      el.style.width=el.dataset.width+'%';
+    });
+  },300);
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildPersonalityResult(pType){
+  const maxP=Math.max(...Object.values(pScores))||1;
+  const bars=Object.entries(pScores).map(([k,v])=>`
+    <div class="score-row">
+      <div class="score-label">${k}</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" data-width="${Math.round(v/maxP*100)}" style="width:0%;background:${pType.color}"></div></div>
+      <div class="score-val">${Math.round(v/maxP*100)}%</div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="result-header">
+      <div class="result-ribbon ribbon-p"></div>
+      <div class="result-mode-badge" style="color:var(--rose)">性格タイプ診断 結果</div>
+      <div class="result-main-title" style="background:linear-gradient(135deg,var(--rose),var(--rose2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        ${pType.name}
+      </div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;text-align:left;margin-bottom:1.25rem">${pType.desc}</p>
+      <div class="tags">${pType.tags.map(t=>`<span class="tag" style="border-color:var(--rose);color:var(--rose);background:rgba(232,160,160,0.08)">${t}</span>`).join('')}</div>
+      <div class="score-bars">${bars}</div>
+    </div>
+    ${buildCTA()}
+    ${buildDisclaimer()}
+    <button class="btn-retry" onclick="retryDiagnosis()">← もう一度診断する</button>
+  `;
+}
+
+function buildThinkingResult(tType){
+  const keys=['論理','言語','空間','数値','創造','分析'];
+  const maxT=Math.max(...keys.map(k=>tScores[k]||0))||1;
+  const bars=keys.map(k=>`
+    <div class="score-row">
+      <div class="score-label">${k}</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" data-width="${Math.round((tScores[k]||0)/maxT*100)}" style="width:0%;background:${tType.color}"></div></div>
+      <div class="score-val">${Math.round((tScores[k]||0)/maxT*100)}%</div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="result-header">
+      <div class="result-ribbon ribbon-t"></div>
+      <div class="result-mode-badge" style="color:var(--teal)">思考スタイル診断 結果</div>
+      <div class="result-main-title" style="background:linear-gradient(135deg,var(--teal),var(--teal2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        ${tType.name}
+      </div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;text-align:left;margin-bottom:1.25rem">${tType.desc}</p>
+      <div class="tags">${tType.tags.map(t=>`<span class="tag" style="border-color:var(--teal);color:var(--teal);background:rgba(96,192,176,0.08)">${t}</span>`).join('')}</div>
+      <div class="score-bars">${bars}</div>
+    </div>
+    ${buildCTA()}
+    ${buildDisclaimer()}
+    <button class="btn-retry" onclick="retryDiagnosis()">← もう一度診断する</button>
+  `;
+}
+
+function buildFullResult(pType,tType){
+  const pKeys=['外向性','安定性','誠実性','協調性','開放性'];
+  const tKeys=['論理','言語','空間','数値','創造','分析'];
+  const maxP=Math.max(...pKeys.map(k=>pScores[k]||0))||1;
+  const maxT=Math.max(...tKeys.map(k=>tScores[k]||0))||1;
+
+  const pBars=pKeys.map(k=>`
+    <div class="score-row">
+      <div class="score-label">${k}</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" data-width="${Math.round((pScores[k]||0)/maxP*100)}" style="width:0%;background:var(--rose)"></div></div>
+      <div class="score-val">${Math.round((pScores[k]||0)/maxP*100)}%</div>
+    </div>
+  `).join('');
+
+  const tBars=tKeys.map(k=>`
+    <div class="score-row">
+      <div class="score-label">${k}</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" data-width="${Math.round((tScores[k]||0)/maxT*100)}" style="width:0%;background:var(--teal)"></div></div>
+      <div class="score-val">${Math.round((tScores[k]||0)/maxT*100)}%</div>
+    </div>
+  `).join('');
+
+  // 統合メッセージ生成
+  const combineMsg=generateCombineMessage(pType,tType);
+
+  return `
+    <div class="result-header">
+      <div class="result-ribbon ribbon-f"></div>
+      <div class="result-mode-badge" style="color:var(--gold)">フル総合診断 結果</div>
+      <div class="result-main-title" style="background:linear-gradient(135deg,var(--gold),var(--gold2),var(--violet2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        ${pType.name}<br><span style="font-size:60%">×</span><br>${tType.name}
+      </div>
+    </div>
+
+    <div class="result-section">
+      <div class="rs-label" style="color:var(--rose)">🌹 性格タイプ — ${pType.name}</div>
+      <div class="rs-text">${pType.desc}</div>
+      <div class="tags">${pType.tags.map(t=>`<span class="tag" style="border-color:var(--rose);color:var(--rose);background:rgba(232,160,160,0.08)">${t}</span>`).join('')}</div>
+      <div class="score-bars">${pBars}</div>
+    </div>
+
+    <div class="result-section">
+      <div class="rs-label" style="color:var(--teal)">🔬 思考スタイル — ${tType.name}</div>
+      <div class="rs-text">${tType.desc}</div>
+      <div class="tags">${tType.tags.map(t=>`<span class="tag" style="border-color:var(--teal);color:var(--teal);background:rgba(96,192,176,0.08)">${t}</span>`).join('')}</div>
+      <div class="score-bars">${tBars}</div>
+    </div>
+
+    <div class="message-box">
+      <div class="mb-label">✦ 総合プロフィール</div>
+      <div class="mb-text">${combineMsg}</div>
+    </div>
+
+    ${buildCTA()}
+    ${buildDisclaimer()}
+    <button class="btn-retry" onclick="retryDiagnosis()">← もう一度診断する</button>
+  `;
+}
+
+function generateCombineMessage(pType,tType){
+  return `「${pType.name}」×「${tType.name}」という組み合わせは、人との関わりの中で${pType.tags[0]}を発揮しながら、${tType.tags[0]}で問題を解決していくタイプです。あなたの強みは、感情と論理のバランスが取れているところ。周りの人を大切にしながら、独自の視点で物事を前に進められる力があります。`;
+}
+
+function buildCTA(){
+  return `
+    <div class="cta-section">
+      <a href="https://note.com/ai_83_wa" target="_blank" class="btn-cta btn-cta-gold">
+        スキルを言語化して副業を始める →
+      </a>
+      <button class="btn-cta btn-cta-outline" onclick="selectOtherMode()">
+        他のモードも試してみる
+      </button>
+    </div>
+  `;
+}
+
+function buildDisclaimer(){
+  return `
+    <div class="disclaimer">
+      <strong>📋 本診断について</strong>
+      本診断はHPI・IQの考え方をベースにしたAIWAオリジナルの簡易診断です。医療・臨床レベルの精度はありません。自己理解を深めるための参考としてお使いください。© 2026 AIWA — 代表
+    </div>
+  `;
+}
+
+function selectOtherMode(){
+  retryDiagnosis();
+}
+
+function retryDiagnosis(){
+  currentQ=0;answers=[];selectedMode='';
+  pScores={外向性:0,安定性:0,誠実性:0,協調性:0,開放性:0};
+  tScores={論理:0,言語:0,空間:0,数値:0,創造:0,分析:0,開放:0};
+  questions=[];
+
+  document.getElementById('result').style.display='none';
+  document.getElementById('loading').style.display='none';
+  document.getElementById('header').style.display='block';
+  document.getElementById('modeSection').style.display='block';
+  document.getElementById('progWrap').style.display='none';
+  document.getElementById('questionArea').style.display='none';
+
+  ['p','t','f'].forEach(m=>document.getElementById('mode-'+m).classList.remove('sel'));
+  document.getElementById('startBtn').disabled=true;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
