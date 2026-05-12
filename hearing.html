@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIWA｜お問い合わせ・ヒアリングフォーム</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F5F2;
+  --surface:#FFFFFF;
+  --border:#E8E3DC;
+  --border-focus:#8BA89C;
+  --ink:#2C2824;
+  --ink2:#7A6E66;
+  --ink3:#AFA99F;
+  --sage:#8BA89C;
+  --sage-l:#EEF4F2;
+  --sage-d:#5C8A7C;
+  --warm:#C4956A;
+  --warm-l:#FAF3EB;
+  --red:#C0544C;
+  --red-l:#FDF0EF;
+  --shadow:0 2px 16px rgba(44,40,36,0.07);
+  --shadow-lg:0 8px 32px rgba(44,40,36,0.12);
+  --radius:14px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  line-height:1.7;
+}
+
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 10% 10%,rgba(139,168,156,0.12) 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 90%,rgba(196,149,106,0.08) 0%,transparent 50%);
+  pointer-events:none;z-index:0;
+}
+
+.wrap{
+  position:relative;z-index:1;
+  max-width:660px;margin:0 auto;
+  padding:2.5rem 1.25rem 5rem;
+}
+
+/* ヘッダー */
+.header{
+  text-align:center;
+  margin-bottom:2.5rem;
+  animation:fadeUp 0.8s ease both;
+}
+
+.logo-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:white;border:1px solid var(--border);
+  border-radius:100px;padding:5px 16px;
+  font-size:11px;color:var(--ink3);
+  letter-spacing:0.15em;margin-bottom:1.25rem;
+  box-shadow:var(--shadow);
+}
+
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--sage)}
+
+h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.6rem,4.5vw,2.4rem);
+  font-weight:600;color:var(--ink);
+  line-height:1.3;margin-bottom:0.75rem;
+}
+
+.header-sub{
+  font-size:13px;color:var(--ink2);
+  line-height:1.8;
+}
+
+/* プログレス */
+.progress-wrap{
+  margin-bottom:2rem;
+  animation:fadeUp 0.8s 0.05s ease both;
+}
+
+.progress-steps{
+  display:flex;align-items:center;
+  gap:0;margin-bottom:10px;
+}
+
+.step-item{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;gap:4px;
+  position:relative;
+}
+
+.step-item::before{
+  content:'';
+  position:absolute;top:14px;right:-50%;
+  width:100%;height:1px;
+  background:var(--border);z-index:0;
+}
+
+.step-item:last-child::before{display:none}
+
+.step-dot{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  position:relative;z-index:1;
+  transition:all 0.3s;
+  border:1.5px solid var(--border);
+  background:white;color:var(--ink3);
+}
+
+.step-dot.active{
+  background:var(--sage);color:white;
+  border-color:var(--sage);
+  box-shadow:0 0 0 4px rgba(139,168,156,0.2);
+}
+
+.step-dot.done{
+  background:var(--sage-d);color:white;
+  border-color:var(--sage-d);
+}
+
+.step-label{font-size:10px;color:var(--ink3);text-align:center}
+.step-label.active{color:var(--sage-d);font-weight:500}
+
+/* カード */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:2rem;
+  box-shadow:var(--shadow);
+  margin-bottom:1rem;
+  animation:fadeUp 0.5s ease both;
+  display:none;
+}
+
+.card.active{display:block}
+
+.card-label{
+  font-size:10px;letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--sage-d);font-weight:700;
+  margin-bottom:0.5rem;
+}
+
+.card-title{
+  font-size:17px;font-weight:700;
+  color:var(--ink);margin-bottom:0.25rem;
+}
+
+.card-sub{
+  font-size:13px;color:var(--ink2);
+  margin-bottom:1.5rem;line-height:1.7;
+}
+
+/* 選択肢 */
+.choice-grid{
+  display:grid;gap:8px;
+}
+
+.choice-grid-2{grid-template-columns:1fr 1fr}
+
+.choice-btn{
+  padding:14px 16px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  background:white;
+  color:var(--ink2);
+  font-size:13px;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-align:left;
+  line-height:1.5;
+  display:flex;align-items:center;gap:10px;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+.choice-btn .ch-icon{font-size:18px;flex-shrink:0}
+.choice-btn .ch-text{flex:1}
+.choice-btn .ch-sub{font-size:11px;color:var(--ink3);display:block;margin-top:2px}
+
+.choice-btn:hover{
+  border-color:var(--sage);
+  background:var(--sage-l);
+  color:var(--ink);
+}
+
+.choice-btn.sel{
+  border-color:var(--sage-d);
+  background:var(--sage-l);
+  color:var(--sage-d);
+  font-weight:500;
+}
+
+.choice-btn:active{transform:scale(0.98)}
+
+/* サブ選択 */
+.sub-choices{
+  margin-top:12px;
+  display:none;
+  animation:fadeUp 0.3s ease both;
+}
+
+.sub-choices.show{display:block}
+
+.sub-label{
+  font-size:12px;color:var(--ink3);
+  margin-bottom:8px;
+  padding-left:4px;
+}
+
+.sub-chip-wrap{display:flex;flex-wrap:wrap;gap:6px}
+
+.sub-chip{
+  padding:6px 14px;
+  border:1px solid var(--border);
+  border-radius:100px;
+  background:white;
+  color:var(--ink2);
+  font-size:12px;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  cursor:pointer;
+  transition:all 0.2s;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.sub-chip:hover{border-color:var(--sage);color:var(--sage-d)}
+.sub-chip.sel{border-color:var(--sage-d);background:var(--sage-l);color:var(--sage-d);font-weight:500}
+
+/* テキストエリア */
+.textarea-wrap{position:relative}
+
+textarea{
+  width:100%;
+  min-height:120px;
+  padding:14px 16px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  background:white;
+  color:var(--ink);
+  font-size:14px;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  line-height:1.7;
+  resize:vertical;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+textarea::placeholder{color:var(--ink3);font-size:13px}
+textarea:focus{border-color:var(--border-focus)}
+
+/* 免責ボックス */
+.disclaimer-box{
+  background:var(--warm-l);
+  border:1.5px solid rgba(196,149,106,0.3);
+  border-radius:10px;
+  padding:1.25rem;
+  margin-bottom:1.25rem;
+}
+
+.disclaimer-title{
+  font-size:13px;font-weight:700;
+  color:var(--warm);margin-bottom:0.75rem;
+  display:flex;align-items:center;gap:6px;
+}
+
+.can-table{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+
+.can-col{
+  background:white;border-radius:8px;
+  padding:10px 12px;border:1px solid var(--border);
+}
+
+.can-header{
+  font-size:10px;font-weight:700;
+  letter-spacing:0.1em;margin-bottom:6px;
+}
+
+.can-ok .can-header{color:var(--sage-d)}
+.can-ng .can-header{color:var(--red)}
+
+.can-item{
+  font-size:12px;color:var(--ink2);
+  line-height:1.8;
+  padding-left:14px;
+  position:relative;
+}
+
+.can-item::before{
+  content:'';
+  position:absolute;left:2px;top:8px;
+  width:6px;height:6px;border-radius:50%;
+}
+
+.can-ok .can-item::before{background:var(--sage)}
+.can-ng .can-item::before{background:var(--red)}
+
+/* チェックボックス */
+.check-wrap{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 14px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  cursor:pointer;
+  transition:border-color 0.2s;
+  background:white;
+}
+
+.check-wrap.checked{
+  border-color:var(--sage-d);
+  background:var(--sage-l);
+}
+
+.check-box{
+  width:20px;height:20px;
+  border:1.5px solid var(--border);
+  border-radius:5px;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;margin-top:1px;
+  background:white;
+}
+
+.check-wrap.checked .check-box{
+  background:var(--sage-d);
+  border-color:var(--sage-d);
+  color:white;
+}
+
+.check-text{font-size:13px;color:var(--ink2);line-height:1.6}
+.check-wrap.checked .check-text{color:var(--sage-d)}
+
+/* 入力 */
+.input-group{margin-bottom:1rem}
+
+.input-label{
+  font-size:12px;color:var(--ink2);
+  margin-bottom:6px;display:block;
+}
+
+.optional-badge{
+  font-size:10px;color:var(--ink3);
+  background:var(--bg);border-radius:3px;
+  padding:1px 6px;margin-left:6px;
+}
+
+input[type="text"],input[type="email"]{
+  width:100%;
+  padding:12px 14px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  background:white;
+  color:var(--ink);
+  font-size:14px;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+input::placeholder{color:var(--ink3);font-size:13px}
+input:focus{border-color:var(--border-focus)}
+
+/* ボタン */
+.btn-wrap{
+  display:flex;gap:8px;
+  margin-top:1.5rem;
+}
+
+.btn-next{
+  flex:1;padding:14px;
+  border:none;border-radius:10px;
+  background:var(--sage-d);color:white;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:14px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;
+  box-shadow:0 4px 12px rgba(92,138,124,0.3);
+}
+
+.btn-next:hover{
+  background:var(--sage);
+  transform:translateY(-1px);
+  box-shadow:0 6px 16px rgba(92,138,124,0.35);
+}
+
+.btn-next:disabled{
+  opacity:0.35;cursor:not-allowed;
+  transform:none;box-shadow:none;
+}
+
+.btn-back{
+  padding:14px 20px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  background:white;color:var(--ink2);
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:13px;cursor:pointer;
+  transition:all 0.2s;
+}
+
+.btn-back:hover{border-color:var(--sage);color:var(--sage-d)}
+
+/* 完了画面 */
+.complete{
+  display:none;text-align:center;
+  padding:3rem 1rem;
+  animation:fadeUp 0.8s ease both;
+}
+
+.complete-icon{font-size:52px;margin-bottom:1.25rem}
+.complete-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:600;
+  color:var(--ink);margin-bottom:0.75rem;
+}
+.complete-text{font-size:14px;color:var(--ink2);line-height:1.9}
+.complete-contact{
+  margin-top:1.5rem;
+  background:white;border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.25rem;
+  font-size:13px;color:var(--ink2);line-height:2;
+}
+
+/* フッター */
+.footer{
+  text-align:center;margin-top:4rem;
+  padding-top:1.5rem;
+  border-top:1px solid var(--border);
+  font-size:11px;color:var(--ink3);line-height:1.9;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:480px){
+  .card{padding:1.5rem}
+  .choice-grid-2{grid-template-columns:1fr}
+  .can-table{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ヘッダー -->
+<div class="header">
+  <div class="logo-badge"><span class="logo-dot"></span>AIWA — AI Multi-Work Alliance</div>
+  <h1>お問い合わせ<br>ヒアリングフォーム</h1>
+  <p class="header-sub">
+    フォーム送信後に詳細ヒアリングシートをお送りします。<br>
+    ご回答いただいた上で、<strong>2回まで無料で診断</strong>いたします。<br>
+    <span style="color:var(--ink3)">完全予約制・1回30分以内｜匿名でのお問い合わせも可能です。</span>
+  </p>
+</div>
+
+<!-- プログレス -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="step-item">
+      <div class="step-dot active" id="dot1">1</div>
+      <div class="step-label active" id="lbl1">あなたについて</div>
+    </div>
+    <div class="step-item">
+      <div class="step-dot" id="dot2">2</div>
+      <div class="step-label" id="lbl2">お問い合わせ種別</div>
+    </div>
+    <div class="step-item">
+      <div class="step-dot" id="dot3">3</div>
+      <div class="step-label" id="lbl3">現在の課題</div>
+    </div>
+    <div class="step-item">
+      <div class="step-dot" id="dot4">4</div>
+      <div class="step-label" id="lbl4">ご確認・連絡先</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP1：あなたについて -->
+<div class="card active" id="step1">
+  <div class="card-label">STEP 1 / 4</div>
+  <div class="card-title">あなたのご立場を教えてください</div>
+  <div class="card-sub">当てはまるものを選んでください（1つ）</div>
+
+  <div class="choice-grid">
+    <button class="choice-btn" onclick="selectRole(this,'company-rep')">
+      <span class="ch-icon">👔</span>
+      <span class="ch-text">会社代表・経営者<span class="ch-sub">運送会社・一般企業の代表の方</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectRole(this,'accounting')">
+      <span class="ch-icon">📊</span>
+      <span class="ch-text">経理・総務担当者<span class="ch-sub">経理・総務・バックオフィス担当の方</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectRole(this,'transport')">
+      <span class="ch-icon">🚛</span>
+      <span class="ch-text">運行管理者<span class="ch-sub">運送会社の運行管理担当の方</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectRole(this,'company-staff')">
+      <span class="ch-icon">🏢</span>
+      <span class="ch-text">その他会社関係者<span class="ch-sub">上記以外の会社員・役員の方</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectRole(this,'gov')">
+      <span class="ch-icon">🏛️</span>
+      <span class="ch-text">行政・役場関係者<span class="ch-sub">市区町村・行政機関の方</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectRole(this,'edu')">
+      <span class="ch-icon">🏫</span>
+      <span class="ch-text">教育機関関係者<span class="ch-sub">学校・塾・教育機関の方</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectRole(this,'individual')">
+      <span class="ch-icon">👤</span>
+      <span class="ch-text">個人<span class="ch-sub">副業・フリーランス・一般の方</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectRole(this,'student')">
+      <span class="ch-icon">🎓</span>
+      <span class="ch-text">学生<span class="ch-sub">学生・大学院生の方</span></span>
+    </button>
+  </div>
+
+  <div style="margin-top:12px">
+    <div class="sub-label" style="margin-bottom:8px">今の状況として当てはまるものはありますか？（複数選択可・任意）</div>
+    <div class="sub-chip-wrap" id="feelingChips">
+      <span class="sub-chip" onclick="toggleChip(this)">誰にも分かってもらえない孤独感がある</span>
+      <span class="sub-chip" onclick="toggleChip(this)">どこから手をつけていいか分からず疲弊している</span>
+      <span class="sub-chip" onclick="toggleChip(this)">相談できる人が周りにいない</span>
+      <span class="sub-chip" onclick="toggleChip(this)">一人で全部抱えていて限界を感じている</span>
+      <span class="sub-chip" onclick="toggleChip(this)">コストを下げたいけど何から始めればいいか分からない</span>
+      <span class="sub-chip" onclick="toggleChip(this)">特になし・まずは話を聞きたい</span>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-next" id="btn1" onclick="goStep(2)" disabled>次へ →</button>
+  </div>
+</div>
+
+<!-- STEP2：種別 -->
+<div class="card" id="step2">
+  <div class="card-label">STEP 2 / 4</div>
+  <div class="card-title">お問い合わせの種別を教えてください</div>
+  <div class="card-sub">まず大きなカテゴリを選んでください</div>
+
+  <div class="choice-grid">
+    <button class="choice-btn" onclick="selectCategory(this,'transport-tool')">
+      <span class="ch-icon">🚛</span>
+      <span class="ch-text">運行管理ツール・DX導入<span class="ch-sub">運行記録・書類のデジタル化など</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectCategory(this,'subsidy')">
+      <span class="ch-icon">📋</span>
+      <span class="ch-text">補助金・助成金活用<span class="ch-sub">申請サポート・情報収集など</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectCategory(this,'doc-support')">
+      <span class="ch-icon">📄</span>
+      <span class="ch-text">書類・事務サポート<span class="ch-sub">書類作成・フロー改善など</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectCategory(this,'manabi')">
+      <span class="ch-icon">📚</span>
+      <span class="ch-text">学習支援（MANABI）<span class="ch-sub">AI学習支援ツールについて</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectCategory(this,'ai-intro')">
+      <span class="ch-icon">🤖</span>
+      <span class="ch-text">AI活用・副業相談<span class="ch-sub">個人・副業でのAI活用など</span></span>
+    </button>
+    <button class="choice-btn" onclick="selectCategory(this,'other')">
+      <span class="ch-icon">💬</span>
+      <span class="ch-text">その他・まずは相談<span class="ch-sub">上記に当てはまらない方</span></span>
+    </button>
+  </div>
+
+  <!-- サブカテゴリ -->
+  <div class="sub-choices" id="sub-transport-tool">
+    <div class="sub-label">さらに詳しく（複数選択可）</div>
+    <div class="sub-chip-wrap">
+      <span class="sub-chip" onclick="toggleChip(this)">運行記録のデジタル化</span>
+      <span class="sub-chip" onclick="toggleChip(this)">点呼記録・日報管理</span>
+      <span class="sub-chip" onclick="toggleChip(this)">ドライバー管理</span>
+      <span class="sub-chip" onclick="toggleChip(this)">法令対応・書類整備</span>
+      <span class="sub-chip" onclick="toggleChip(this)">既存ツールとの連携</span>
+      <span class="sub-chip" onclick="toggleChip(this)">まずは話を聞きたい</span>
+    </div>
+  </div>
+
+  <div class="sub-choices" id="sub-subsidy">
+    <div class="sub-label">さらに詳しく（複数選択可）</div>
+    <div class="sub-chip-wrap">
+      <span class="sub-chip" onclick="toggleChip(this)">持続化補助金</span>
+      <span class="sub-chip" onclick="toggleChip(this)">IT導入補助金</span>
+      <span class="sub-chip" onclick="toggleChip(this)">モノづくり補助金</span>
+      <span class="sub-chip" onclick="toggleChip(this)">雇用・創業関連助成金</span>
+      <span class="sub-chip" onclick="toggleChip(this)">どの補助金か分からない</span>
+      <span class="sub-chip" onclick="toggleChip(this)">まずは話を聞きたい</span>
+    </div>
+  </div>
+
+  <div class="sub-choices" id="sub-doc-support">
+    <div class="sub-label">さらに詳しく（複数選択可）</div>
+    <div class="sub-chip-wrap">
+      <span class="sub-chip" onclick="toggleChip(this)">社内書類・マニュアル整備</span>
+      <span class="sub-chip" onclick="toggleChip(this)">契約書・見積書の作成サポート</span>
+      <span class="sub-chip" onclick="toggleChip(this)">行政への申請書類の整理</span>
+      <span class="sub-chip" onclick="toggleChip(this)">事務フローの改善</span>
+      <span class="sub-chip" onclick="toggleChip(this)">顧問料が高くて困っている</span>
+    </div>
+  </div>
+
+  <div class="sub-choices" id="sub-manabi">
+    <div class="sub-label">さらに詳しく（複数選択可）</div>
+    <div class="sub-chip-wrap">
+      <span class="sub-chip" onclick="toggleChip(this)">子どもの学習サポートに</span>
+      <span class="sub-chip" onclick="toggleChip(this)">塾・教育機関への導入</span>
+      <span class="sub-chip" onclick="toggleChip(this)">学校・自治体との連携</span>
+      <span class="sub-chip" onclick="toggleChip(this)">デモを見てみたい</span>
+    </div>
+  </div>
+
+  <div class="sub-choices" id="sub-ai-intro">
+    <div class="sub-label">さらに詳しく（複数選択可）</div>
+    <div class="sub-chip-wrap">
+      <span class="sub-chip" onclick="toggleChip(this)">副業・フリーランスの始め方</span>
+      <span class="sub-chip" onclick="toggleChip(this)">AIツールの使い方</span>
+      <span class="sub-chip" onclick="toggleChip(this)">自分に合ったAI活用法を知りたい</span>
+      <span class="sub-chip" onclick="toggleChip(this)">note・SNSの活用相談</span>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-back" onclick="goStep(1)">← 戻る</button>
+    <button class="btn-next" id="btn2" onclick="goStep(3)" disabled>次へ →</button>
+  </div>
+</div>
+
+<!-- STEP3：課題 -->
+<div class="card" id="step3">
+  <div class="card-label">STEP 3 / 4</div>
+  <div class="card-title">現在、課題に感じていることを教えてください</div>
+  <div class="card-sub">自由にお書きください。箇条書きでも構いません。</div>
+
+  <div class="textarea-wrap">
+    <textarea id="challenge" placeholder="例：
+・社労士への顧問料が毎月5万円かかっていて負担が大きい
+・補助金に興味があるが、どこに相談していいか分からない
+・運行管理の書類が手作業で時間がかかっている
+・会社を立ち上げたばかりで事務を回す余裕がない
+・導入を検討しているツールが高すぎる
+
+など、気になっていることをそのままお書きください。"></textarea>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-back" onclick="goStep(2)">← 戻る</button>
+    <button class="btn-next" onclick="goStep(4)">次へ →</button>
+  </div>
+</div>
+
+<!-- STEP4：免責・連絡先 -->
+<div class="card" id="step4">
+  <div class="card-label">STEP 4 / 4</div>
+  <div class="card-title">ご確認と連絡先</div>
+
+  <!-- 相談制限説明 -->
+  <div style="background:var(--sage-l);border:1.5px solid rgba(139,168,156,0.4);border-radius:10px;padding:1.1rem;margin-bottom:1.25rem">
+    <div style="font-size:13px;font-weight:700;color:var(--sage-d);margin-bottom:8px">📅 AIWAの無料診断について</div>
+    <div style="font-size:13px;color:var(--ink2);line-height:1.9">
+      現役の運行管理者・看護師である代表が一件一件に全力で向き合うため、<br>
+      <strong>初回無料診断は「完全予約制・30分以内」</strong>としております。<br><br>
+      ✓ フォーム送信 → 詳細ヒアリングシートをご返送<br>
+      ✓ ご回答いただいた上で、<strong>2回まで無料</strong>でご相談いただけます<br>
+      ✓ 2回目の診断後、継続サポートが必要な場合は有料プランへ<br><br>
+      <span style="color:var(--ink3);font-size:12px">※ 限られた時間を最大限に活用するため、事前のご回答へのご協力をお願いします。</span>
+    </div>
+  </div>
+
+  <!-- 免責ボックス -->
+  <div class="disclaimer-box">
+    <div class="disclaimer-title">⚠️ AIWAのサービスについてご確認ください</div>
+
+    <div class="can-table">
+      <div class="can-col can-ok">
+        <div class="can-header">✅ AIWAが対応できること</div>
+        <div class="can-item">運行管理ツールの導入・サポート</div>
+        <div class="can-item">補助金情報の提供・申請書類の構成アドバイス</div>
+        <div class="can-item">AI活用・業務効率化の相談</div>
+        <div class="can-item">学習支援ツール（MANABI）の提供</div>
+        <div class="can-item" style="margin-top:6px;font-weight:700;color:var(--sage-d)">【書類サポートの具体的な範囲】</div>
+        <div class="can-item">社内書類・マニュアル・フロー図の作成</div>
+        <div class="can-item">書類の記入方法・書き方のアドバイス</div>
+        <div class="can-item">必要書類の洗い出し・整理・チェックリスト化</div>
+        <div class="can-item">契約書・見積書の雛形作成<span style="font-size:10px;color:var(--ink3);display:block">法的判断は専門士へ</span></div>
+        <div class="can-item">行政申請書類の書き方案内<span style="font-size:10px;color:var(--ink3);display:block">提出・代理は本人または専門士が行います</span></div>
+      </div>
+      <div class="can-col can-ng">
+        <div class="can-header">❌ 対応できないこと（専門士の管轄）</div>
+        <div class="can-item">労働保険・社会保険の手続き代行<span style="font-size:10px;color:var(--ink3);display:block">→ 社会保険労務士</span></div>
+        <div class="can-item">許認可申請の代理・代行<span style="font-size:10px;color:var(--ink3);display:block">→ 行政書士</span></div>
+        <div class="can-item">法的な書類作成・契約の代理<span style="font-size:10px;color:var(--ink3);display:block">→ 弁護士</span></div>
+        <div class="can-item">税務申告・税務代理<span style="font-size:10px;color:var(--ink3);display:block">→ 税理士</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 同意チェック -->
+  <div class="check-wrap" id="agreeWrap" onclick="toggleAgree()">
+    <div class="check-box" id="agreeBox"></div>
+    <div class="check-text">
+      AIWAは専門資格士ではなく、あくまでコンサルティング・サポートとして伴走するサービスであることを理解した上でお問い合わせします。最終的な判断・手続きは自身（または代表者）が行うことも了解しました。
+    </div>
+  </div>
+
+  <!-- 連絡先（任意） -->
+  <div style="margin-top:1.5rem">
+    <div style="font-size:13px;color:var(--ink2);margin-bottom:1rem;line-height:1.7">
+      連絡先は任意です。匿名でのお問い合わせも可能です。<br>
+      <span style="color:var(--ink3);font-size:12px">ご回答を希望される場合は、いずれかご入力ください。</span>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">お名前またはニックネーム<span class="optional-badge">任意</span></label>
+      <input type="text" id="name" placeholder="例：山田　または　たろう">
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">メールアドレス<span class="optional-badge">任意</span></label>
+      <input type="email" id="email" placeholder="例：example@mail.com">
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">会社名・団体名<span class="optional-badge">任意</span></label>
+      <input type="text" id="company" placeholder="例：○○運送株式会社　または　個人">
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-back" onclick="goStep(3)">← 戻る</button>
+    <button class="btn-next" id="btnSubmit" onclick="submitForm()" disabled>送信する</button>
+  </div>
+</div>
+
+<!-- 完了画面 -->
+<div class="complete" id="complete">
+  <div class="complete-icon">🌿</div>
+  <div class="complete-title">お問い合わせを受け付けました</div>
+  <div class="complete-text">
+    ご連絡いただきありがとうございます。<br>
+    内容を確認の上、AIWAよりご連絡いたします。<br>
+    <span style="color:var(--ink3);font-size:13px">（匿名の場合はご返信できかねます。ご了承ください。）</span>
+  </div>
+  <div class="complete-contact">
+    <strong style="color:var(--ink);display:block;margin-bottom:6px">AIWA（アイワ）代表 山﨑絵美</strong>
+    📧 aiwa.pj83@gmail.com<br>
+    📱 090-2586-8779<br>
+    🌐 <a href="https://aiwa-83.github.io/AIWA/" style="color:var(--sage-d)">https://aiwa-83.github.io/AIWA/</a><br>
+    𝕏 <a href="https://x.com/Ai83wa" style="color:var(--sage-d)">@Ai83wa</a>
+  </div>
+</div>
+
+<div class="footer">
+  <strong style="color:var(--ink2)">AIWA（アイワ）— AI Multi-Work Alliance</strong><br>
+  代表 山﨑絵美｜熊本県玉名郡玉東町<br>
+  aiwa.pj83@gmail.com｜090-2586-8779<br><br>
+  本フォームはコンサルティングサービスのお問い合わせ用です。<br>
+  専門士（社労士・行政書士・弁護士・税理士）業務は対応しておりません。
+</div>
+
+</div>
+
+<script>
+let selectedRole = '';
+let selectedCategory = '';
+let agreed = false;
+
+// ステップ管理
+function goStep(n) {
+  for(let i = 1; i <= 4; i++) {
+    document.getElementById('step' + i).classList.remove('active');
+    document.getElementById('dot' + i).className = 'step-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+    document.getElementById('lbl' + i).className = 'step-label' + (i === n ? ' active' : '');
+  }
+  if(n <= 4) {
+    document.getElementById('step' + n).classList.add('active');
+  }
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// STEP1：役割選択
+function selectRole(btn, role) {
+  document.querySelectorAll('#step1 .choice-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selectedRole = role;
+  document.getElementById('btn1').disabled = false;
+}
+
+// STEP2：カテゴリ選択
+function selectCategory(btn, cat) {
+  document.querySelectorAll('#step2 .choice-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selectedCategory = cat;
+  document.getElementById('btn2').disabled = false;
+
+  // サブカテゴリを表示
+  document.querySelectorAll('.sub-choices').forEach(el => el.classList.remove('show'));
+  const sub = document.getElementById('sub-' + cat);
+  if(sub) sub.classList.add('show');
+}
+
+// チップのトグル
+function toggleChip(chip) {
+  chip.classList.toggle('sel');
+}
+
+// 同意チェック
+function toggleAgree() {
+  agreed = !agreed;
+  const wrap = document.getElementById('agreeWrap');
+  const box = document.getElementById('agreeBox');
+  wrap.classList.toggle('checked', agreed);
+  box.innerHTML = agreed ? '✓' : '';
+  document.getElementById('btnSubmit').disabled = !agreed;
+}
+
+// 送信処理
+function submitForm() {
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const company = document.getElementById('company').value;
+  const challenge = document.getElementById('challenge').value;
+
+  // サブチップ収集
+  const chips = [...document.querySelectorAll('.sub-chip.sel')].map(c => c.textContent).join('、');
+
+  // メール送信（Formspree or mailto）
+  const subject = encodeURIComponent('【AIWAお問い合わせ】' + selectedCategory);
+  const body = encodeURIComponent(
+    `【お名前】${name || '匿名'}\n` +
+    `【会社名】${company || '未入力'}\n` +
+    `【メール】${email || '未入力'}\n` +
+    `【立場】${selectedRole}\n` +
+    `【種別】${selectedCategory}\n` +
+    `【詳細】${chips || 'なし'}\n` +
+    `【課題・状況】\n${challenge || 'なし'}\n` +
+    `【免責同意】同意済み`
+  );
+
+  // mailtoで送信
+  window.location.href = `mailto:aiwa.pj83@gmail.com?subject=${subject}&body=${body}`;
+
+  // 完了画面表示
+  for(let i = 1; i <= 4; i++) {
+    document.getElementById('step' + i).classList.remove('active');
+    document.getElementById('dot' + i).className = 'step-dot done';
+  }
+  document.getElementById('complete').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>
