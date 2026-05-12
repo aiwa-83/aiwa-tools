@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIWA｜山﨑絵美 リンク一覧</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E0E18;
+  --surface:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.08);
+  --border-hover:rgba(255,255,255,0.2);
+  --ink:#F0EEF8;
+  --ink2:#A098C0;
+  --ink3:#5A5278;
+  --gold:#C8A96E;
+  --gold-l:rgba(200,169,110,0.12);
+  --sage:#6BAF9A;
+  --sage-l:rgba(107,175,154,0.12);
+  --rose:#C87878;
+  --rose-l:rgba(200,120,120,0.12);
+  --sky:#6898D0;
+  --sky-l:rgba(104,152,208,0.12);
+  --violet:#9878C8;
+  --violet-l:rgba(152,120,200,0.12);
+  --amber:#C89848;
+  --amber-l:rgba(200,152,72,0.12);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* 背景 */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 10%,rgba(200,169,110,0.08) 0%,transparent 45%),
+    radial-gradient(ellipse at 80% 90%,rgba(107,175,154,0.07) 0%,transparent 45%),
+    radial-gradient(ellipse at 60% 40%,rgba(152,120,200,0.05) 0%,transparent 40%);
+  pointer-events:none;
+}
+
+/* 星 */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;border-radius:50%;background:white;animation:twinkle var(--d,3s) infinite var(--delay,0s)}
+@keyframes twinkle{0%,100%{opacity:var(--min,0.05)}50%{opacity:var(--max,0.35)}}
+
+.wrap{
+  position:relative;z-index:1;
+  max-width:480px;margin:0 auto;
+  padding:3rem 1.25rem 5rem;
+}
+
+/* プロフィール */
+.profile{
+  text-align:center;
+  margin-bottom:2.5rem;
+  animation:fadeUp 0.8s ease both;
+}
+
+.avatar{
+  width:80px;height:80px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--sage));
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;
+  margin:0 auto 1rem;
+  box-shadow:0 0 0 3px rgba(200,169,110,0.3);
+}
+
+.name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:700;
+  color:var(--ink);margin-bottom:4px;
+  letter-spacing:0.05em;
+}
+
+.title{
+  font-size:12px;color:var(--gold);
+  letter-spacing:0.18em;text-transform:uppercase;
+  margin-bottom:0.75rem;font-weight:500;
+}
+
+.bio{
+  font-size:13px;color:var(--ink2);
+  line-height:1.8;
+  max-width:320px;margin:0 auto;
+}
+
+/* セクションラベル */
+.section-label{
+  font-size:10px;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--ink3);
+  text-align:center;margin:1.75rem 0 0.75rem;
+  display:flex;align-items:center;gap:10px;
+}
+.section-label::before,.section-label::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+
+/* リンクカード */
+.link-card{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  margin-bottom:8px;
+  text-decoration:none;
+  color:var(--ink);
+  transition:all 0.25s;
+  animation:fadeUp 0.6s ease both;
+  position:relative;overflow:hidden;
+}
+
+.link-card::before{
+  content:'';position:absolute;inset:0;
+  opacity:0;transition:opacity 0.25s;
+}
+
+.link-card:hover{
+  border-color:var(--border-hover);
+  transform:translateY(-2px);
+}
+
+.link-card:hover::before{opacity:1}
+
+/* カラー別 */
+.card-gold::before{background:var(--gold-l)}
+.card-gold:hover{box-shadow:0 4px 24px rgba(200,169,110,0.15)}
+
+.card-sage::before{background:var(--sage-l)}
+.card-sage:hover{box-shadow:0 4px 24px rgba(107,175,154,0.15)}
+
+.card-rose::before{background:var(--rose-l)}
+.card-rose:hover{box-shadow:0 4px 24px rgba(200,120,120,0.15)}
+
+.card-sky::before{background:var(--sky-l)}
+.card-sky:hover{box-shadow:0 4px 24px rgba(104,152,208,0.15)}
+
+.card-violet::before{background:var(--violet-l)}
+.card-violet:hover{box-shadow:0 4px 24px rgba(152,120,200,0.15)}
+
+.card-amber::before{background:var(--amber-l)}
+.card-amber:hover{box-shadow:0 4px 24px rgba(200,152,72,0.15)}
+
+.link-icon{
+  width:42px;height:42px;
+  border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;position:relative;z-index:1;
+}
+
+.icon-gold{background:var(--gold-l);border:1px solid rgba(200,169,110,0.3)}
+.icon-sage{background:var(--sage-l);border:1px solid rgba(107,175,154,0.3)}
+.icon-rose{background:var(--rose-l);border:1px solid rgba(200,120,120,0.3)}
+.icon-sky{background:var(--sky-l);border:1px solid rgba(104,152,208,0.3)}
+.icon-violet{background:var(--violet-l);border:1px solid rgba(152,120,200,0.3)}
+.icon-amber{background:var(--amber-l);border:1px solid rgba(200,152,72,0.3)}
+
+.link-text{flex:1;position:relative;z-index:1}
+.link-name{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.link-desc{font-size:11px;color:var(--ink2);line-height:1.5}
+
+.link-arrow{
+  color:var(--ink3);font-size:14px;
+  position:relative;z-index:1;
+  transition:transform 0.2s;
+}
+
+.link-card:hover .link-arrow{
+  transform:translateX(3px);
+  color:var(--ink2);
+}
+
+/* 注目バッジ */
+.badge-new{
+  font-size:9px;font-weight:700;
+  padding:2px 7px;border-radius:100px;
+  background:var(--sage);color:white;
+  margin-left:6px;letter-spacing:0.05em;
+  vertical-align:middle;
+}
+
+.badge-free{
+  font-size:9px;font-weight:700;
+  padding:2px 7px;border-radius:100px;
+  background:var(--gold);color:white;
+  margin-left:6px;letter-spacing:0.05em;
+  vertical-align:middle;
+}
+
+/* フッター */
+.footer{
+  text-align:center;margin-top:3rem;
+  font-size:11px;color:var(--ink3);line-height:2;
+}
+
+.footer-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;color:var(--gold);
+  letter-spacing:0.1em;margin-bottom:6px;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* アニメーション遅延 */
+.d1{animation-delay:0.05s}
+.d2{animation-delay:0.1s}
+.d3{animation-delay:0.15s}
+.d4{animation-delay:0.2s}
+.d5{animation-delay:0.25s}
+.d6{animation-delay:0.3s}
+.d7{animation-delay:0.35s}
+.d8{animation-delay:0.4s}
+.d9{animation-delay:0.45s}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="wrap">
+
+  <!-- プロフィール -->
+  <div class="profile">
+    <div class="avatar">🌿</div>
+    <div class="name">山﨑 絵美</div>
+    <div class="title">AIWA — AI Multi-Work Alliance</div>
+    <p class="bio">看護師18年・運行管理者。現場を知る私が作る、難しいを「使えた」に変えるAIツール。熊本から全国の頑張る人の隣へ。</p>
+  </div>
+
+  <!-- お問い合わせ -->
+  <div class="section-label">お問い合わせ</div>
+
+  <a href="https://aiwa-tools.vercel.app/hearing.html" class="link-card card-sage d1" target="_blank">
+    <div class="link-icon icon-sage">📋</div>
+    <div class="link-text">
+      <div class="link-name">無料診断のお申し込み<span class="badge-new">NEW</span></div>
+      <div class="link-desc">ヒアリングフォーム｜2回まで無料・完全予約制</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <!-- 無料ツール -->
+  <div class="section-label">無料ツール</div>
+
+  <a href="https://aiwa-tools.vercel.app" class="link-card card-gold d2" target="_blank">
+    <div class="link-icon icon-gold">✨</div>
+    <div class="link-text">
+      <div class="link-name">タイプ診断<span class="badge-free">無料</span></div>
+      <div class="link-desc">副業向け・あなたの強みを見つける診断</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <a href="https://aiwa-tools.vercel.app/student.html" class="link-card card-rose d3" target="_blank">
+    <div class="link-icon icon-rose">🎓</div>
+    <div class="link-text">
+      <div class="link-name">学生向け才能タイプ診断<span class="badge-free">無料</span></div>
+      <div class="link-desc">中高生・大学生向け・自分の強みを発見</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <a href="https://aiwa-tools.vercel.app/hpi-iq.html" class="link-card card-violet d4" target="_blank">
+    <div class="link-icon icon-violet">👑</div>
+    <div class="link-text">
+      <div class="link-name">性格×思考スタイル総合診断<span class="badge-free">無料</span></div>
+      <div class="link-desc">HPIベース×IQベース｜25問フル診断</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <!-- 有料ツール -->
+  <div class="section-label">有料ツール（note）</div>
+
+  <a href="https://aiwa-tools.vercel.app/vol1.html" class="link-card card-amber d5" target="_blank">
+    <div class="link-icon icon-amber">💼</div>
+    <div class="link-text">
+      <div class="link-name">スキル診断ツール</div>
+      <div class="link-desc">自己紹介文・提案文を自動生成｜¥500</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <a href="https://aiwa-tools.vercel.app/vol2.html" class="link-card card-amber d6" target="_blank">
+    <div class="link-icon icon-amber">🏷️</div>
+    <div class="link-text">
+      <div class="link-name">フリマコピー生成AI</div>
+      <div class="link-desc">メルカリ・ラクマ対応｜¥300</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <a href="https://aiwa-tools.vercel.app/vol3.html" class="link-card card-amber d7" target="_blank">
+    <div class="link-icon icon-amber">✅</div>
+    <div class="link-text">
+      <div class="link-name">タスク整理AI</div>
+      <div class="link-desc">気分対応・今日の最低ライン設定｜¥300</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <!-- SNS・HP -->
+  <div class="section-label">SNS・ウェブサイト</div>
+
+  <a href="https://note.com/ai_83_wa" class="link-card card-sky d8" target="_blank">
+    <div class="link-icon icon-sky">📝</div>
+    <div class="link-text">
+      <div class="link-name">note</div>
+      <div class="link-desc">AI（えーあい／あい）｜記事・ツール販売</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <a href="https://x.com/Ai83wa" class="link-card card-sky d9" target="_blank">
+    <div class="link-icon icon-sky">𝕏</div>
+    <div class="link-text">
+      <div class="link-name">X（旧Twitter）</div>
+      <div class="link-desc">@Ai83wa｜日々の発信・最新情報</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <a href="https://aiwa-83.github.io/AIWA/" class="link-card card-gold" style="animation-delay:0.5s" target="_blank">
+    <div class="link-icon icon-gold">🌐</div>
+    <div class="link-text">
+      <div class="link-name">公式ウェブサイト</div>
+      <div class="link-desc">AIWA — AI Multi-Work Alliance</div>
+    </div>
+    <div class="link-arrow">→</div>
+  </a>
+
+  <!-- フッター -->
+  <div class="footer">
+    <div class="footer-logo">AIWA</div>
+    諦めてきたチャンスを、取り戻す。<br>
+    あなたの隣で、一緒に歩きます。<br><br>
+    © 2026 AIWA — 代表 山﨑絵美<br>
+    aiwa.pj83@gmail.com｜090-2586-8779
+  </div>
+
+</div>
+
+<script>
+// 星を生成
+const starsEl = document.getElementById('stars');
+for(let i = 0; i < 50; i++){
+  const s = document.createElement('div');
+  s.className = 'star';
+  const sz = Math.random() * 1.5 + 0.5;
+  s.style.cssText = `
+    width:${sz}px;height:${sz}px;
+    top:${Math.random()*100}%;
+    left:${Math.random()*100}%;
+    --d:${Math.random()*4+2}s;
+    --delay:${Math.random()*4}s;
+    --min:0.02;
+    --max:${Math.random()*0.3+0.05};
+  `;
+  starsEl.appendChild(s);
+}
+</script>
+</body>
+</html>
